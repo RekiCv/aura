@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>AURA — Biblioteca</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <link rel="stylesheet" href="library.css">
+
+</head>
+
+
+<body>
+
+    <div class="library-page">
+
+
+        <!-- ==========================================
+             SIDEBAR
+        =========================================== -->
+
+        <aside class="sidebar">
+
+            <div class="logo">
+                AURA
+            </div>
+
+
+            <nav>
+
+                <button
+                    class="nav-item"
+                    onclick="window.location.href='menu.html'"
+                >
+                    <span>⌂</span>
+                    Inicio
+                </button>
+
+
+                <button
+                    class="nav-item active"
+                    onclick="window.location.href='library.html'"
+                >
+                    <span>♫</span>
+                    Biblioteca
+                </button>
+
+
+                <!-- PLAYLISTS -->
+
+                <div class="sidebar-section">
+
+                    <div class="sidebar-section-header">
+
+                        <span>
+                            LISTAS
+                        </span>
+
+
+                        <button
+                            id="newPlaylistButton"
+                            class="new-playlist-button"
+                            title="Nueva playlist"
+                        >
+                            +
+                        </button>
+
+                    </div>
+
+
+                    <div
+                        id="playlistList"
+                        class="playlist-list"
+                    ></div>
+
+                </div>
+
+            </nav>
+
+
+            <div class="sidebar-bottom">
+
+                <button
+                    class="nav-item"
+                    onclick="window.location.href='settings.html'"
+                >
+                    <span>⚙</span>
+                    Ajustes
+                </button>
+
+            </div>
+
+        </aside>
+
+
+
+        <!-- ==========================================
+             CONTENIDO
+        =========================================== -->
+
+        <main class="content">
+
+            <header class="topbar">
+
+                <div>
+
+                    <p class="greeting">
+                        TU MÚSICA
+                    </p>
+
+                    <h1>
+                        Biblioteca
+                    </h1>
+
+                    <p class="page-description">
+                        Toda tu colección en un solo lugar.
+                    </p>
+
+                </div>
+
+
+                <button
+                    class="add-music-button"
+                    id="addMusicButton"
+                >
+                    + Añadir música
+                </button>
+
+            </header>
+
+
+
+            <!-- ==========================================
+                 HERRAMIENTAS
+            =========================================== -->
+
+            <section class="library-tools">
+
+                <div class="search-box">
+
+                    <span class="search-icon">
+                        ⌕
+                    </span>
+
+                    <input
+                        type="text"
+                        id="searchInput"
+                        placeholder="Buscar música..."
+                    >
+
+                </div>
+
+
+                <div class="filters">
+
+                    <button
+                        class="filter active"
+                        data-filter="songs"
+                    >
+                        Canciones
+                    </button>
+
+
+                    <button
+                        class="filter"
+                        data-filter="albums"
+                    >
+                        Álbumes
+                    </button>
+
+
+                    <button
+                        class="filter"
+                        data-filter="artists"
+                    >
+                        Artistas
+                    </button>
+
+                </div>
+
+
+                <div class="sort-box">
+
+                    <span>
+                        Ordenar:
+                    </span>
+
+
+                    <select id="sortSelect">
+
+                        <option value="name">
+                            Nombre
+                        </option>
+
+
+                        <option value="newest">
+                            Añadido recientemente
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </section>
+
+
+
+            <!-- ==========================================
+                 LISTA
+            =========================================== -->
+
+            <section class="library-section">
+
+                <div class="section-header">
+
+                    <div>
+
+                        <h2>
+                            Tu biblioteca
+                        </h2>
+
+                        <span id="songCount">
+                            0 canciones
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="music-list"
+                    id="musicList"
+                >
+
+                    <div class="empty-library">
+
+                        <div class="empty-icon">
+                            ♫
+                        </div>
+
+                        <h3>
+                            Tu biblioteca está vacía
+                        </h3>
+
+                        <p>
+                            Añade música para empezar.
+                        </p>
+
+                        <button
+                            id="emptyAddButton"
+                            class="primary-button"
+                        >
+                            Añadir música
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+
+
+        <!-- ==========================================
+             REPRODUCTOR
+        =========================================== -->
+
+        <footer class="player">
+
+            <div class="now-playing">
+
+                <div class="mini-art">
+                    ♫
+                </div>
+
+
+                <div class="now-playing-info">
+
+                    <strong id="currentTitle">
+                        Nada reproduciéndose
+                    </strong>
+
+
+                    <span id="currentArtist">
+                        Selecciona una canción
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="player-center">
+
+                <div class="player-controls">
+
+                    <button
+                        id="rewindButton"
+                        title="Retroceder 10 segundos"
+                    >
+                        ↶
+                    </button>
+
+
+                    <button
+                        id="playButton"
+                        class="main-play"
+                        title="Reproducir"
+                    >
+                        ▶
+                    </button>
+
+
+                    <button
+                        id="forwardButton"
+                        title="Avanzar 10 segundos"
+                    >
+                        ↷
+                    </button>
+
+                </div>
+
+
+                <div class="time-info">
+
+                    <span id="currentTime">
+                        0:00
+                    </span>
+
+
+                    <div
+                        class="progress-bar"
+                        id="progressBar"
+                        title="Buscar en la canción"
+                    >
+
+                        <div
+                            class="progress-fill"
+                            id="progressFill"
+                        ></div>
+
+                    </div>
+
+
+                    <span id="duration">
+                        0:00
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="volume">
+
+                <span id="volumeIcon">
+                    ♫
+                </span>
+
+
+                <div
+                    class="volume-line"
+                    id="volumeLine"
+                    title="Volumen"
+                >
+
+                    <div id="volumeFill"></div>
+
+                </div>
+
+            </div>
+
+        </footer>
+
+
+
+        <!-- ==========================================
+             MENÚ AÑADIR A PLAYLIST
+        =========================================== -->
+
+        <div
+            class="playlist-menu-overlay"
+            id="playlistMenuOverlay"
+        >
+
+            <div
+                class="playlist-menu"
+                id="playlistMenu"
+            >
+
+                <div class="playlist-menu-header">
+
+                    <div>
+
+                        <p>
+                            PLAYLISTS
+                        </p>
+
+                        <h3>
+                            Añadir a lista
+                        </h3>
+
+                    </div>
+
+
+                    <button
+                        id="closePlaylistMenu"
+                        class="modal-close"
+                    >
+                        ×
+                    </button>
+
+                </div>
+
+
+                <div
+                    id="playlistMenuList"
+                    class="playlist-menu-list"
+                ></div>
+
+
+                <button
+                    id="createPlaylistFromMenu"
+                    class="create-playlist-option"
+                >
+                    <span>
+                        +
+                    </span>
+
+                    Nueva playlist
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ==========================================
+             VENTANA DE EDICIÓN
+        =========================================== -->
+
+        <div
+            class="modal-overlay"
+            id="editModal"
+        >
+
+            <div class="edit-modal">
+
+                <div class="modal-header">
+
+                    <div>
+
+                        <p class="modal-eyebrow">
+                            INFORMACIÓN DE LA CANCIÓN
+                        </p>
+
+                        <h2>
+                            Editar canción
+                        </h2>
+
+                    </div>
+
+
+                    <button
+                        class="modal-close"
+                        id="closeEditModal"
+                    >
+                        ×
+                    </button>
+
+                </div>
+
+
+                <div class="edit-form">
+
+                    <label>
+                        Título
+
+                        <input
+                            type="text"
+                            id="editTitle"
+                        >
+                    </label>
+
+
+                    <label>
+                        Artista
+
+                        <input
+                            type="text"
+                            id="editArtist"
+                        >
+                    </label>
+
+
+                    <label>
+                        Álbum
+
+                        <input
+                            type="text"
+                            id="editAlbum"
+                        >
+                    </label>
+
+
+                    <label>
+                        Artista del álbum
+
+                        <input
+                            type="text"
+                            id="editAlbumArtist"
+                        >
+                    </label>
+
+
+                    <div class="form-row">
+
+                        <label>
+                            Género
+
+                            <input
+                                type="text"
+                                id="editGenre"
+                            >
+                        </label>
+
+
+                        <label>
+                            Año
+
+                            <input
+                                type="text"
+                                id="editYear"
+                            >
+                        </label>
+
+                    </div>
+
+
+                    <div class="form-row">
+
+                        <label>
+                            Nº de pista
+
+                            <input
+                                type="text"
+                                id="editTrack"
+                            >
+                        </label>
+
+
+                        <label>
+                            Nº de disco
+
+                            <input
+                                type="text"
+                                id="editDisc"
+                            >
+                        </label>
+
+                    </div>
+
+
+                    <label>
+                        Compositor
+
+                        <input
+                            type="text"
+                            id="editComposer"
+                        >
+                    </label>
+
+
+                    <label>
+                        Comentario
+
+                        <textarea
+                            id="editComment"
+                            rows="3"
+                        ></textarea>
+                    </label>
+
+                </div>
+
+
+                <div class="modal-actions">
+
+                    <button
+                        class="cancel-button"
+                        id="cancelEdit"
+                    >
+                        Cancelar
+                    </button>
+
+
+                    <button
+                        class="save-button"
+                        id="saveEdit"
+                    >
+                        Guardar cambios
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ==========================================
+             INPUT ARCHIVOS
+        =========================================== -->
+
+        <input
+            type="file"
+            id="musicFileInput"
+            accept="audio/*"
+            multiple
+            hidden
+        >
+
+    </div>
+
+
+    <script src="library.js"></script>
+
+</body>
+
+</html>

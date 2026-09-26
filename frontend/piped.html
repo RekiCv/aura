@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AURA · Música online</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #0d0814;
+            color: white;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            margin: auto;
+            padding: 40px;
+        }
+
+        h1 {
+            color: #b56cff;
+            margin-bottom: 30px;
+        }
+
+        .search {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .search input {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            background: #1b1226;
+            color: white;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .search button {
+            padding: 15px 25px;
+            border: none;
+            border-radius: 10px;
+            background: #8b3dff;
+            color: white;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .search button:hover {
+            background: #a45cff;
+        }
+
+        #status {
+            color: #aaa;
+            margin-bottom: 20px;
+        }
+
+        .results {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .result {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+
+            padding: 12px;
+
+            background: #171020;
+            border-radius: 12px;
+
+            transition: 0.2s;
+        }
+
+        .result:hover {
+            background: #21152d;
+        }
+
+        .thumbnail {
+            width: 120px;
+            height: 68px;
+
+            object-fit: cover;
+
+            border-radius: 8px;
+
+            background: #24152f;
+        }
+
+        .info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .title {
+            font-size: 16px;
+            font-weight: bold;
+
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .artist {
+            color: #999;
+            margin-top: 5px;
+        }
+
+        .duration {
+            color: #777;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .actions button {
+            width: 42px;
+            height: 42px;
+
+            border: none;
+            border-radius: 50%;
+
+            background: #29163a;
+            color: white;
+
+            cursor: pointer;
+
+            font-size: 18px;
+        }
+
+        .actions button:hover {
+            background: #8b3dff;
+        }
+
+        .player {
+            position: fixed;
+
+            left: 0;
+            right: 0;
+            bottom: 0;
+
+            background: #120b1a;
+
+            border-top: 1px solid #2b1939;
+
+            padding: 15px 25px;
+
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .player-info {
+            min-width: 200px;
+        }
+
+        .player-title {
+            font-weight: bold;
+        }
+
+        .player-artist {
+            color: #888;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        audio {
+            flex: 1;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+    <h1>AURA · Música online</h1>
+
+
+    <div class="search">
+
+        <input
+            id="searchInput"
+            type="text"
+            placeholder="Buscar música..."
+        >
+
+        <button id="searchButton">
+            Buscar
+        </button>
+
+    </div>
+
+
+    <div id="status">
+        Esperando búsqueda...
+    </div>
+
+
+    <div
+        id="results"
+        class="results"
+    ></div>
+
+</div>
+
+
+<div class="player">
+
+    <div class="player-info">
+
+        <div
+            id="playerTitle"
+            class="player-title"
+        >
+            Nada reproduciéndose
+        </div>
+
+        <div
+            id="playerArtist"
+            class="player-artist"
+        >
+            AURA
+        </div>
+
+    </div>
+
+
+    <audio
+        id="audioPlayer"
+        controls
+    ></audio>
+
+</div>
+
+
+
+<script>
+
+
+// ==========================================
+// VARIABLES
+// ==========================================
+
+let pywebviewReady = false;
+
+let searchResults = [];
+
+
+// ==========================================
+// ELEMENTOS
+// ==========================================
+
+const searchInput =
+    document.getElementById(
+        "searchInput"
+    );
+
+const searchButton =
+    document.getElementById(
+        "searchButton"
+    );
+
+const resultsContainer =
+    document.getElementById(
+        "results"
+    );
+
+const status =
+    document.getElementById(
+        "status"
+    );
+
+const audioPlayer =
+    document.getElementById(
+        "audioPlayer"
+    );
+
+const playerTitle =
+    document.getElementById(
+        "playerTitle"
+    );
+
+const playerArtist =
+    document.getElementById(
+        "playerArtist"
+    );
+
+
+// ==========================================
+// PYWEBVIEW LISTO
+// ==========================================
+
+window.addEventListener(
+    "pywebviewready",
+    () => {
+
+        pywebviewReady = true;
+
+        status.textContent =
+            "Listo para buscar música.";
+
+    }
+);
+
+
+// ==========================================
+// FORMATEAR DURACIÓN
+// ==========================================
+
+function formatDuration(
+    seconds
+) {
+
+    if (!seconds) {
+        return "";
+    }
+
+    const minutes =
+        Math.floor(
+            seconds / 60
+        );
+
+    const remainingSeconds =
+        Math.floor(
+            seconds % 60
+        );
+
+    return (
+        minutes +
+        ":" +
+        String(
+            remainingSeconds
+        ).padStart(
+            2,
+            "0"
+        )
+    );
+
+}
+
+
+// ==========================================
+// BUSCAR
+// ==========================================
+
+async function search() {
+
+    const query =
+        searchInput.value.trim();
+
+
+    if (!query) {
+
+        status.textContent =
+            "Escribe algo para buscar.";
+
+        return;
+
+    }
+
+
+    if (!pywebviewReady) {
+
+        status.textContent =
+            "AURA todavía está iniciando...";
+
+        return;
+
+    }
+
+
+    status.textContent =
+        "Buscando música...";
+
+
+    resultsContainer.innerHTML =
+        "";
+
+
+    try {
+
+        const response =
+            await window.pywebview.api.search_piped(
+                query
+            );
+
+
+        if (!response.success) {
+
+            status.textContent =
+                "Error: " +
+                response.error;
+
+            return;
+
+        }
+
+
+        searchResults =
+            response.items || [];
+
+
+        status.textContent =
+            `Encontrados ${searchResults.length} resultados · ${response.instance}`;
+
+
+        renderResults();
+
+
+    } catch (error) {
+
+        console.error(
+            error
+        );
+
+
+        status.textContent =
+            "Error comunicando con AURA.";
+
+    }
+
+}
+
+
+// ==========================================
+// MOSTRAR RESULTADOS
+// ==========================================
+
+function renderResults() {
+
+    resultsContainer.innerHTML =
+        "";
+
+
+    searchResults.forEach(
+        (item, index) => {
+
+            const result =
+                document.createElement(
+                    "div"
+                );
+
+            result.className =
+                "result";
+
+
+            const thumbnail =
+                document.createElement(
+                    "img"
+                );
+
+            thumbnail.className =
+                "thumbnail";
+
+            thumbnail.src =
+                item.thumbnail || "";
+
+            thumbnail.alt =
+                "";
+
+
+            const info =
+                document.createElement(
+                    "div"
+                );
+
+            info.className =
+                "info";
+
+
+            const title =
+                document.createElement(
+                    "div"
+                );
+
+            title.className =
+                "title";
+
+            title.textContent =
+                item.title;
+
+
+            const artist =
+                document.createElement(
+                    "div"
+                );
+
+            artist.className =
+                "artist";
+
+            artist.textContent =
+                item.artist;
+
+
+            const duration =
+                document.createElement(
+                    "div"
+                );
+
+            duration.className =
+                "duration";
+
+            duration.textContent =
+                formatDuration(
+                    item.duration
+                );
+
+
+            info.appendChild(
+                title
+            );
+
+            info.appendChild(
+                artist
+            );
+
+            info.appendChild(
+                duration
+            );
+
+
+            const actions =
+                document.createElement(
+                    "div"
+                );
+
+            actions.className =
+                "actions";
+
+
+            const playButton =
+                document.createElement(
+                    "button"
+                );
+
+            playButton.textContent =
+                "▶";
+
+
+            playButton.title =
+                "Reproducir";
+
+
+            playButton.addEventListener(
+                "click",
+                () => {
+
+                    playResult(
+                        index
+                    );
+
+                }
+            );
+
+
+            const addButton =
+                document.createElement(
+                    "button"
+                );
+
+            addButton.textContent =
+                "+";
+
+
+            addButton.title =
+                "Añadir";
+
+
+            addButton.addEventListener(
+                "click",
+                () => {
+
+                    addResult(
+                        index
+                    );
+
+                }
+            );
+
+
+            actions.appendChild(
+                playButton
+            );
+
+            actions.appendChild(
+                addButton
+            );
+
+
+            result.appendChild(
+                thumbnail
+            );
+
+            result.appendChild(
+                info
+            );
+
+            result.appendChild(
+                actions
+            );
+
+
+            resultsContainer.appendChild(
+                result
+            );
+
+        }
+    );
+
+}
+
+
+// ==========================================
+// REPRODUCIR RESULTADO
+// ==========================================
+
+async function playResult(
+    index
+) {
+
+    const item =
+        searchResults[index];
+
+
+    if (!item) {
+        return;
+    }
+
+
+    if (!item.videoId) {
+
+        status.textContent =
+            "Este resultado no tiene videoId.";
+
+        return;
+
+    }
+
+
+    status.textContent =
+        "Obteniendo audio...";
+
+
+    try {
+
+        const response =
+            await window.pywebview.api.get_audio_stream(
+                item.videoId
+            );
+
+
+        if (!response.success) {
+
+            status.textContent =
+                "No se pudo obtener el audio: " +
+                response.error;
+
+            return;
+
+        }
+
+
+        console.log(
+            "Stream:",
+            response
+        );
+
+
+        audioPlayer.src =
+            response.url;
+
+
+        playerTitle.textContent =
+            item.title;
+
+
+        playerArtist.textContent =
+            item.artist;
+
+
+        status.textContent =
+            "Reproduciendo: " +
+            item.title;
+
+
+        await audioPlayer.play();
+
+
+    } catch (error) {
+
+        console.error(
+            error
+        );
+
+
+        status.textContent =
+            "Error reproduciendo el audio.";
+
+    }
+
+}
+
+
+// ==========================================
+// AÑADIR
+// ==========================================
+
+function addResult(
+    index
+) {
+
+    const item =
+        searchResults[index];
+
+
+    if (!item) {
+        return;
+    }
+
+
+    status.textContent =
+        "Añadir a la biblioteca: " +
+        item.title;
+
+
+    console.log(
+        "Añadir:",
+        item
+    );
+
+}
+
+
+// ==========================================
+// BOTÓN BUSCAR
+// ==========================================
+
+searchButton.addEventListener(
+    "click",
+    search
+);
+
+
+// ==========================================
+// ENTER PARA BUSCAR
+// ==========================================
+
+searchInput.addEventListener(
+    "keydown",
+    (event) => {
+
+        if (
+            event.key === "Enter"
+        ) {
+
+            search();
+
+        }
+
+    }
+);
+
+
+</script>
+
+
+</body>
+
+</html> 

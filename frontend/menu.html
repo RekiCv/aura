@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>AURA</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <link rel="stylesheet" href="menu.css">
+
+</head>
+
+
+<body>
+
+    <div class="menu">
+
+
+        <!-- ==========================================
+             SIDEBAR
+        =========================================== -->
+
+        <aside class="sidebar">
+
+            <div class="logo">
+                AURA
+            </div>
+
+
+            <nav>
+
+                <button
+                    class="nav-item active"
+                    onclick="window.location.href='menu.html'"
+                >
+                    <span>⌂</span>
+                    Inicio
+                </button>
+
+
+                <button
+                    class="nav-item"
+                    onclick="window.location.href='library.html'"
+                >
+                    <span>♫</span>
+                    Biblioteca
+                </button>
+
+
+                <!-- PLAYLISTS -->
+
+                <div class="sidebar-section">
+
+                    <div class="sidebar-section-header">
+
+                        <span>
+                            LISTAS
+                        </span>
+
+                        <button
+                            id="newPlaylistButton"
+                            class="new-playlist-button"
+                            title="Nueva playlist"
+                        >
+                            +
+                        </button>
+
+                    </div>
+
+
+                    <div
+                        id="playlistList"
+                        class="playlist-list"
+                    ></div>
+
+                </div>
+
+            </nav>
+
+
+            <div class="sidebar-bottom">
+
+                <button
+                    class="nav-item"
+                    onclick="window.location.href='settings.html'"
+                >
+                    <span>⚙</span>
+                    Ajustes
+                </button>
+
+            </div>
+
+        </aside>
+
+
+
+        <!-- ==========================================
+             CONTENIDO
+        =========================================== -->
+
+        <main class="content">
+
+            <header class="topbar">
+
+                <div>
+
+                    <p class="greeting">
+                        Bienvenido a AURA
+                    </p>
+
+                    <h1>
+                        Tu música.
+                    </h1>
+
+                </div>
+
+
+                <button class="profile-button">
+                    ◉
+                </button>
+
+            </header>
+
+
+
+            <section class="hero">
+
+                <div class="hero-content">
+
+                    <p class="eyebrow">
+                        TU COLECCIÓN
+                    </p>
+
+                    <h2>
+                        Escucha lo que<br>
+                        te representa.
+                    </h2>
+
+                    <p class="hero-description">
+                        Toda tu música, en un solo lugar.
+                    </p>
+
+                    <button
+                        class="primary-button"
+                        onclick="window.location.href='library.html'"
+                    >
+                        Explorar música
+                    </button>
+
+                </div>
+
+
+                <div class="hero-orb"></div>
+
+            </section>
+
+
+
+            <section class="recent-section">
+
+                <div class="section-header">
+
+                    <h2>
+                        Escuchado recientemente
+                    </h2>
+
+                    <button
+                        class="see-all"
+                        onclick="window.location.href='library.html'"
+                    >
+                        Ver todo
+                    </button>
+
+                </div>
+
+
+                <div class="tracks">
+
+                    <div class="empty-recent">
+
+                        <span>
+                            No has escuchado nada recientemente
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+
+
+        <!-- ==========================================
+             REPRODUCTOR
+        =========================================== -->
+
+        <footer class="player">
+
+            <div class="now-playing">
+
+                <div class="mini-art"></div>
+
+                <div>
+
+                    <strong>
+                        Nada reproduciéndose
+                    </strong>
+
+                    <span>
+                        Selecciona una canción
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="player-controls">
+
+                <button>
+                    ↶
+                </button>
+
+                <button class="main-play">
+                    ▶
+                </button>
+
+                <button>
+                    ↷
+                </button>
+
+            </div>
+
+
+            <div class="volume">
+
+                <span>
+                    ♪
+                </span>
+
+                <div class="volume-line">
+
+                    <div></div>
+
+                </div>
+
+            </div>
+
+        </footer>
+
+
+
+        <!-- ==========================================
+             MODAL NUEVA PLAYLIST
+        =========================================== -->
+
+        <div
+            id="playlistModal"
+            class="playlist-modal-overlay"
+        >
+
+            <div class="playlist-modal">
+
+                <div class="modal-header">
+
+                    <div>
+
+                        <p>
+                            NUEVA LISTA
+                        </p>
+
+                        <h2>
+                            Crear playlist
+                        </h2>
+
+                    </div>
+
+
+                    <button
+                        id="closePlaylistModal"
+                        class="modal-close"
+                    >
+                        ×
+                    </button>
+
+                </div>
+
+
+                <div class="playlist-form">
+
+                    <label>
+
+                        Nombre
+
+                        <input
+                            type="text"
+                            id="playlistNameInput"
+                            placeholder="Ej. Chill, Gym, Favoritos..."
+                            maxlength="60"
+                        >
+
+                    </label>
+
+                </div>
+
+
+                <div class="modal-actions">
+
+                    <button
+                        id="cancelPlaylistButton"
+                        class="cancel-button"
+                    >
+                        Cancelar
+                    </button>
+
+
+                    <button
+                        id="createPlaylistButton"
+                        class="save-button"
+                    >
+                        Crear playlist
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script src="menu.js"></script>
+
+</body>
+
+</html>

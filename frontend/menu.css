@@ -1,0 +1,955 @@
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    padding: 0;
+
+    width: 100%;
+    height: 100%;
+
+    background: #08070d;
+
+    color: #ffffff;
+
+    font-family: "Sora", sans-serif;
+}
+
+button,
+input {
+    font-family: inherit;
+}
+
+button {
+    border: none;
+}
+
+
+/* ==========================================
+   ESTRUCTURA
+========================================== */
+
+.menu {
+    width: 100%;
+    height: 100vh;
+
+    overflow: hidden;
+
+    background:
+        radial-gradient(
+            circle at 70% 20%,
+            rgba(130, 60, 255, 0.08),
+            transparent 30%
+        ),
+        #08070d;
+}
+
+
+/* ==========================================
+   SIDEBAR
+========================================== */
+
+.sidebar {
+
+    position: fixed;
+
+    left: 0;
+    top: 0;
+    bottom: 0;
+
+    width: 220px;
+
+    padding: 28px 16px;
+
+    display: flex;
+    flex-direction: column;
+
+    background: rgba(10, 9, 16, 0.96);
+
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+
+    z-index: 20;
+}
+
+
+.logo {
+
+    padding: 0 12px;
+
+    margin-bottom: 38px;
+
+    font-size: 27px;
+    font-weight: 700;
+
+    letter-spacing: 5px;
+
+    color: #ffffff;
+}
+
+
+nav {
+    display: flex;
+    flex-direction: column;
+
+    gap: 6px;
+}
+
+
+.nav-item {
+
+    width: 100%;
+
+    padding: 12px 14px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 13px;
+
+    border-radius: 10px;
+
+    background: transparent;
+
+    color: #88858f;
+
+    font-size: 13px;
+
+    cursor: pointer;
+
+    text-align: left;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+
+.nav-item span {
+
+    width: 20px;
+
+    font-size: 17px;
+
+    text-align: center;
+}
+
+
+.nav-item:hover {
+
+    background: rgba(255, 255, 255, 0.05);
+
+    color: #ffffff;
+}
+
+
+.nav-item.active {
+
+    background: rgba(143, 73, 255, 0.13);
+
+    color: #c99cff;
+}
+
+
+/* ==========================================
+   SECCIÓN PLAYLISTS
+========================================== */
+
+.sidebar-section {
+
+    margin-top: 30px;
+}
+
+
+.sidebar-section-header {
+
+    padding: 0 10px 9px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    color: #66636e;
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+    letter-spacing: 1.5px;
+}
+
+
+.new-playlist-button {
+
+    width: 24px;
+    height: 24px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 7px;
+
+    background: rgba(255, 255, 255, 0.05);
+
+    color: #aaa6b2;
+
+    font-size: 17px;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.new-playlist-button:hover {
+
+    background: rgba(143, 73, 255, 0.2);
+
+    color: #c99cff;
+
+    transform: scale(1.05);
+}
+
+
+.playlist-list {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 3px;
+
+    max-height: 260px;
+
+    overflow-y: auto;
+}
+
+
+.playlist-list::-webkit-scrollbar {
+    width: 3px;
+}
+
+
+.playlist-list::-webkit-scrollbar-thumb {
+
+    background: rgba(255, 255, 255, 0.12);
+
+    border-radius: 10px;
+}
+
+
+.playlist-item {
+
+    width: 100%;
+
+    padding: 9px 11px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    border-radius: 8px;
+
+    background: transparent;
+
+    color: #8b8892;
+
+    font-size: 12px;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+
+.playlist-item:hover {
+
+    background: rgba(255, 255, 255, 0.04);
+
+    color: #ffffff;
+}
+
+
+.playlist-item-icon {
+
+    width: 19px;
+
+    color: #756b80;
+
+    text-align: center;
+}
+
+
+.empty-playlists {
+
+    padding: 7px 11px;
+
+    color: #55525d;
+
+    font-size: 11px;
+
+    line-height: 1.5;
+}
+
+
+/* ==========================================
+   SIDEBAR BOTTOM
+========================================== */
+
+.sidebar-bottom {
+
+    margin-top: auto;
+}
+
+
+/* ==========================================
+   CONTENIDO
+========================================== */
+
+.content {
+
+    position: fixed;
+
+    left: 220px;
+    right: 0;
+
+    top: 0;
+    bottom: 92px;
+
+    padding: 42px 52px;
+
+    overflow-y: auto;
+}
+
+
+.topbar {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    justify-content: space-between;
+}
+
+
+.greeting {
+
+    margin: 0 0 7px;
+
+    color: #77737f;
+
+    font-size: 11px;
+
+    font-weight: 500;
+
+    letter-spacing: 1.7px;
+
+    text-transform: uppercase;
+}
+
+
+.topbar h1 {
+
+    margin: 0;
+
+    font-size: 34px;
+
+    font-weight: 500;
+
+    letter-spacing: -1.5px;
+}
+
+
+.profile-button {
+
+    width: 40px;
+    height: 40px;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.05);
+
+    color: #8c8795;
+
+    cursor: pointer;
+}
+
+
+/* ==========================================
+   HERO
+========================================== */
+
+.hero {
+
+    position: relative;
+
+    min-height: 300px;
+
+    margin-top: 42px;
+
+    padding: 48px;
+
+    overflow: hidden;
+
+    border-radius: 24px;
+
+    background:
+        linear-gradient(
+            110deg,
+            rgba(52, 25, 82, 0.85),
+            rgba(19, 14, 29, 0.92)
+        );
+
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+
+.hero-content {
+
+    position: relative;
+
+    z-index: 2;
+}
+
+
+.eyebrow {
+
+    margin: 0 0 15px;
+
+    color: #a879dc;
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+    letter-spacing: 2px;
+}
+
+
+.hero h2 {
+
+    margin: 0;
+
+    font-size: 39px;
+
+    line-height: 1.12;
+
+    font-weight: 500;
+
+    letter-spacing: -1.5px;
+}
+
+
+.hero-description {
+
+    margin: 18px 0 25px;
+
+    color: #8f8b96;
+
+    font-size: 13px;
+}
+
+
+.primary-button {
+
+    padding: 12px 20px;
+
+    border-radius: 9px;
+
+    background: #9b59ff;
+
+    color: white;
+
+    font-size: 12px;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease;
+}
+
+
+.primary-button:hover {
+
+    background: #a96dff;
+
+    transform: translateY(-1px);
+}
+
+
+.hero-orb {
+
+    position: absolute;
+
+    width: 300px;
+    height: 300px;
+
+    right: 10%;
+
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(166, 91, 255, 0.75),
+            rgba(96, 39, 173, 0.25) 45%,
+            transparent 70%
+        );
+
+    filter: blur(8px);
+
+    opacity: 0.7;
+}
+
+
+/* ==========================================
+   RECIENTE
+========================================== */
+
+.recent-section {
+
+    margin-top: 42px;
+}
+
+
+.section-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 18px;
+}
+
+
+.section-header h2 {
+
+    margin: 0;
+
+    font-size: 17px;
+
+    font-weight: 500;
+}
+
+
+.see-all {
+
+    background: transparent;
+
+    color: #77737f;
+
+    font-size: 11px;
+
+    cursor: pointer;
+}
+
+
+.see-all:hover {
+
+    color: #b783e9;
+}
+
+
+.tracks {
+
+    min-height: 100px;
+}
+
+
+.empty-recent {
+
+    min-height: 100px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 14px;
+
+    background: rgba(255, 255, 255, 0.02);
+
+    border: 1px dashed rgba(255, 255, 255, 0.06);
+
+    color: #56525d;
+
+    font-size: 12px;
+}
+
+
+/* ==========================================
+   REPRODUCTOR
+========================================== */
+
+.player {
+
+    position: fixed;
+
+    left: 220px;
+    right: 0;
+    bottom: 0;
+
+    height: 92px;
+
+    padding: 0 32px;
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr 1fr;
+
+    align-items: center;
+
+    background: rgba(12, 11, 18, 0.98);
+
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+
+    z-index: 30;
+}
+
+
+.now-playing {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+}
+
+
+.mini-art {
+
+    width: 48px;
+    height: 48px;
+
+    border-radius: 8px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #251635,
+            #120d18
+        );
+
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+
+.now-playing strong {
+
+    display: block;
+
+    margin-bottom: 5px;
+
+    font-size: 12px;
+
+    font-weight: 500;
+}
+
+
+.now-playing span {
+
+    color: #68646e;
+
+    font-size: 10px;
+}
+
+
+.player-controls {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 18px;
+}
+
+
+.player-controls button {
+
+    width: 30px;
+    height: 30px;
+
+    border-radius: 50%;
+
+    background: transparent;
+
+    color: #77727e;
+
+    cursor: pointer;
+}
+
+
+.player-controls .main-play {
+
+    width: 42px;
+    height: 42px;
+
+    background: #9b59ff;
+
+    color: white;
+
+    font-size: 14px;
+}
+
+
+.volume {
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    align-items: center;
+
+    gap: 10px;
+}
+
+
+.volume > span {
+
+    color: #77727e;
+
+    font-size: 14px;
+}
+
+
+.volume-line {
+
+    width: 90px;
+    height: 3px;
+
+    overflow: hidden;
+
+    border-radius: 10px;
+
+    background: rgba(255, 255, 255, 0.1);
+}
+
+
+.volume-line div {
+
+    width: 65%;
+    height: 100%;
+
+    background: #9b59ff;
+}
+
+
+/* ==========================================
+   MODAL PLAYLIST
+========================================== */
+
+.playlist-modal-overlay {
+
+    position: fixed;
+
+    inset: 0;
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(0, 0, 0, 0.65);
+
+    backdrop-filter: blur(8px);
+
+    z-index: 100;
+}
+
+
+.playlist-modal-overlay.open {
+
+    display: flex;
+}
+
+
+.playlist-modal {
+
+    width: min(460px, calc(100% - 40px));
+
+    padding: 28px;
+
+    border-radius: 18px;
+
+    background: #121019;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.5);
+}
+
+
+.modal-header {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    justify-content: space-between;
+
+    margin-bottom: 25px;
+}
+
+
+.modal-header p {
+
+    margin: 0 0 7px;
+
+    color: #9569bd;
+
+    font-size: 9px;
+
+    font-weight: 600;
+
+    letter-spacing: 1.8px;
+}
+
+
+.modal-header h2 {
+
+    margin: 0;
+
+    font-size: 21px;
+
+    font-weight: 500;
+}
+
+
+.modal-close {
+
+    width: 32px;
+    height: 32px;
+
+    border-radius: 8px;
+
+    background: rgba(255, 255, 255, 0.04);
+
+    color: #77727e;
+
+    font-size: 22px;
+
+    cursor: pointer;
+}
+
+
+.modal-close:hover {
+
+    background: rgba(255, 255, 255, 0.08);
+
+    color: white;
+}
+
+
+.playlist-form label {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 8px;
+
+    color: #8e8995;
+
+    font-size: 11px;
+}
+
+
+.playlist-form input {
+
+    width: 100%;
+
+    padding: 13px 14px;
+
+    border: 1px solid rgba(255, 255, 255, 0.07);
+
+    border-radius: 9px;
+
+    outline: none;
+
+    background: rgba(255, 255, 255, 0.04);
+
+    color: white;
+
+    font-size: 12px;
+}
+
+
+.playlist-form input:focus {
+
+    border-color: rgba(155, 89, 255, 0.7);
+
+    background: rgba(155, 89, 255, 0.05);
+}
+
+
+.modal-actions {
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 9px;
+
+    margin-top: 25px;
+}
+
+
+.cancel-button,
+.save-button {
+
+    padding: 10px 15px;
+
+    border-radius: 8px;
+
+    font-size: 11px;
+
+    cursor: pointer;
+}
+
+
+.cancel-button {
+
+    background: rgba(255, 255, 255, 0.05);
+
+    color: #8e8995;
+}
+
+
+.save-button {
+
+    background: #9b59ff;
+
+    color: white;
+}
+
+
+.save-button:hover {
+
+    background: #a96dff;
+}

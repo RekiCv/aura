@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>AURA · Piped</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+
+        body {
+
+            font-family: "Sora", sans-serif;
+
+            min-height: 100vh;
+
+            background:
+                radial-gradient(
+                    circle at 70% 10%,
+                    rgba(130, 70, 255, 0.18),
+                    transparent 35%
+                ),
+                #08070d;
+
+            color: white;
+
+        }
+
+
+        .page {
+
+            width: min(
+                1100px,
+                calc(100% - 60px)
+            );
+
+            margin: 0 auto;
+
+            padding: 50px 0 80px;
+
+        }
+
+
+        .header {
+
+            margin-bottom: 40px;
+
+        }
+
+
+        .eyebrow {
+
+            color: #a970ff;
+
+            font-size: 11px;
+
+            font-weight: 600;
+
+            letter-spacing: 3px;
+
+            margin-bottom: 10px;
+
+        }
+
+
+        h1 {
+
+            font-size: 38px;
+
+            font-weight: 600;
+
+            margin-bottom: 10px;
+
+        }
+
+
+        .description {
+
+            color: rgba(
+                255,
+                255,
+                255,
+                0.5
+            );
+
+            font-size: 14px;
+
+        }
+
+
+        .search {
+
+            display: flex;
+
+            gap: 10px;
+
+            margin-bottom: 35px;
+
+        }
+
+
+        .search input {
+
+            flex: 1;
+
+            height: 54px;
+
+            padding: 0 18px;
+
+            border-radius: 13px;
+
+            border: 1px solid rgba(
+                255,
+                255,
+                255,
+                0.08
+            );
+
+            background: rgba(
+                255,
+                255,
+                255,
+                0.05
+            );
+
+            color: white;
+
+            outline: none;
+
+            font-family: inherit;
+
+            font-size: 14px;
+
+        }
+
+
+        .search input:focus {
+
+            border-color: rgba(
+                150,
+                80,
+                255,
+                0.6
+            );
+
+        }
+
+
+        .search button {
+
+            height: 54px;
+
+            padding: 0 25px;
+
+            border: none;
+
+            border-radius: 13px;
+
+            background: #8b4dff;
+
+            color: white;
+
+            font-family: inherit;
+
+            font-weight: 600;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+
+        }
+
+
+        .search button:hover {
+
+            background: #9b63ff;
+
+            transform: translateY(-1px);
+
+        }
+
+
+        .status {
+
+            min-height: 25px;
+
+            margin-bottom: 20px;
+
+            color: rgba(
+                255,
+                255,
+                255,
+                0.45
+            );
+
+            font-size: 13px;
+
+        }
+
+
+        .results {
+
+            display: grid;
+
+            gap: 12px;
+
+        }
+
+
+        .result {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 18px;
+
+            padding: 14px;
+
+            border-radius: 15px;
+
+            background: rgba(
+                255,
+                255,
+                255,
+                0.04
+            );
+
+            border: 1px solid rgba(
+                255,
+                255,
+                255,
+                0.06
+            );
+
+            transition: 0.2s;
+
+        }
+
+
+        .result:hover {
+
+            background: rgba(
+                255,
+                255,
+                255,
+                0.07
+            );
+
+        }
+
+
+        .thumbnail {
+
+            width: 180px;
+
+            aspect-ratio: 16 / 9;
+
+            object-fit: cover;
+
+            border-radius: 10px;
+
+            background: #15131c;
+
+            flex-shrink: 0;
+
+        }
+
+
+        .result-info {
+
+            flex: 1;
+
+            min-width: 0;
+
+        }
+
+
+        .result-title {
+
+            font-size: 15px;
+
+            font-weight: 600;
+
+            margin-bottom: 7px;
+
+            white-space: nowrap;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+
+        }
+
+
+        .result-channel {
+
+            color: rgba(
+                255,
+                255,
+                255,
+                0.45
+            );
+
+            font-size: 12px;
+
+            margin-bottom: 7px;
+
+        }
+
+
+        .result-duration {
+
+            color: rgba(
+                255,
+                255,
+                255,
+                0.3
+            );
+
+            font-size: 11px;
+
+        }
+
+
+        .result-actions {
+
+            display: flex;
+
+            gap: 8px;
+
+        }
+
+
+        .action-button {
+
+            width: 42px;
+
+            height: 42px;
+
+            border: none;
+
+            border-radius: 11px;
+
+            background: rgba(
+                255,
+                255,
+                255,
+                0.07
+            );
+
+            color: white;
+
+            cursor: pointer;
+
+            font-size: 16px;
+
+        }
+
+
+        .action-button:hover {
+
+            background: rgba(
+                150,
+                80,
+                255,
+                0.3
+            );
+
+        }
+
+
+        .empty {
+
+            padding: 70px 20px;
+
+            text-align: center;
+
+            color: rgba(
+                255,
+                255,
+                255,
+                0.3
+            );
+
+            border: 1px dashed rgba(
+                255,
+                255,
+                255,
+                0.08
+            );
+
+            border-radius: 18px;
+
+        }
+
+
+        @media (max-width: 700px) {
+
+            .page {
+
+                width: calc(100% - 30px);
+
+                padding-top: 30px;
+
+            }
+
+
+            h1 {
+
+                font-size: 30px;
+
+            }
+
+
+            .search {
+
+                flex-direction: column;
+
+            }
+
+
+            .search button {
+
+                width: 100%;
+
+            }
+
+
+            .result {
+
+                align-items: flex-start;
+
+            }
+
+
+            .thumbnail {
+
+                width: 120px;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="page">
+
+
+    <header class="header">
+
+        <p class="eyebrow">
+            AURA · ONLINE
+        </p>
+
+        <h1>
+            Buscar música
+        </h1>
+
+        <p class="description">
+            Busca música online desde AURA mediante Piped.
+        </p>
+
+    </header>
+
+
+    <div class="search">
+
+        <input
+            id="searchInput"
+            type="text"
+            placeholder="Busca una canción, artista o álbum..."
+            autocomplete="off"
+        >
+
+        <button
+            id="searchButton"
+        >
+            Buscar
+        </button>
+
+    </div>
+
+
+    <div
+        id="status"
+        class="status"
+    ></div>
+
+
+    <main
+        id="results"
+        class="results"
+    >
+
+        <div class="empty">
+
+            Escribe algo para comenzar una búsqueda.
+
+        </div>
+
+    </main>
+
+
+</div>
+
+
+<script>
+
+    const API_URL =
+    "https://pipedapi.leptons.xyz";
+
+
+    const searchInput =
+        document.getElementById(
+            "searchInput"
+        );
+
+
+    const searchButton =
+        document.getElementById(
+            "searchButton"
+        );
+
+
+    const results =
+        document.getElementById(
+            "results"
+        );
+
+
+    const status =
+        document.getElementById(
+            "status"
+        );
+
+
+    // ==========================================
+    // BUSCAR
+    // ==========================================
+
+    async function searchPiped() {
+
+        const query =
+            searchInput.value.trim();
+
+
+        if (!query) {
+
+            status.textContent =
+                "Escribe algo para buscar.";
+
+            return;
+
+        }
+
+
+        if (!navigator.onLine) {
+
+            status.textContent =
+                "No tienes conexión a Internet.";
+
+            return;
+
+        }
+
+
+        status.textContent =
+            "Buscando...";
+
+
+        results.innerHTML = "";
+
+
+        try {
+
+            const url =
+                `${API_URL}/search?q=${encodeURIComponent(query)}&filter=videos`;
+
+
+            const response =
+                await fetch(url);
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    `HTTP ${response.status}`
+                );
+
+            }
+
+
+            const data =
+                await response.json();
+
+
+            console.log(
+                "Respuesta Piped:",
+                data
+            );
+
+
+            if (
+                !data.items ||
+                data.items.length === 0
+            ) {
+
+                status.textContent =
+                    "No se encontraron resultados.";
+
+                results.innerHTML = `
+                    <div class="empty">
+                        No hay resultados para esta búsqueda.
+                    </div>
+                `;
+
+                return;
+
+            }
+
+
+            status.textContent =
+                `${data.items.length} resultados encontrados`;
+
+
+            data.items.forEach(
+                renderResult
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "Error buscando en Piped:",
+                error
+            );
+
+
+            status.textContent =
+                "No se pudo conectar con Piped.";
+
+
+            results.innerHTML = `
+                <div class="empty">
+                    Error al realizar la búsqueda.
+                    <br><br>
+                    Comprueba tu conexión a Internet.
+                </div>
+            `;
+
+        }
+
+    }
+
+
+    // ==========================================
+    // MOSTRAR RESULTADO
+    // ==========================================
+
+    function renderResult(item) {
+
+        const result =
+            document.createElement(
+                "article"
+            );
+
+
+        result.className =
+            "result";
+
+
+        const thumbnail =
+            document.createElement(
+                "img"
+            );
+
+
+        thumbnail.className =
+            "thumbnail";
+
+
+        thumbnail.src =
+            item.thumbnail || "";
+
+
+        thumbnail.alt =
+            "";
+
+
+        const info =
+            document.createElement(
+                "div"
+            );
+
+
+        info.className =
+            "result-info";
+
+
+        const title =
+            document.createElement(
+                "div"
+            );
+
+
+        title.className =
+            "result-title";
+
+
+        title.textContent =
+            item.title || "Sin título";
+
+
+        const channel =
+            document.createElement(
+                "div"
+            );
+
+
+        channel.className =
+            "result-channel";
+
+
+        channel.textContent =
+            item.uploaderName ||
+            "Canal desconocido";
+
+
+        const duration =
+            document.createElement(
+                "div"
+            );
+
+
+        duration.className =
+            "result-duration";
+
+
+        duration.textContent =
+            formatDuration(
+                item.duration
+            );
+
+
+        info.appendChild(
+            title
+        );
+
+
+        info.appendChild(
+            channel
+        );
+
+
+        info.appendChild(
+            duration
+        );
+
+
+        const actions =
+            document.createElement(
+                "div"
+            );
+
+
+        actions.className =
+            "result-actions";
+
+
+        const playButton =
+            document.createElement(
+                "button"
+            );
+
+
+        playButton.className =
+            "action-button";
+
+
+        playButton.textContent =
+            "▶";
+
+
+        playButton.title =
+            "Reproducir";
+
+
+        playButton.addEventListener(
+            "click",
+            () => {
+
+                alert(
+                    "Encontrado correctamente:\\n\\n"
+                    + item.title
+                    + "\\n\\n"
+                    + "Video ID: "
+                    + item.url
+                );
+
+            }
+        );
+
+
+        const addButton =
+            document.createElement(
+                "button"
+            );
+
+
+        addButton.className =
+            "action-button";
+
+
+        addButton.textContent =
+            "+";
+
+
+        addButton.title =
+            "Añadir a Biblioteca";
+
+
+        addButton.addEventListener(
+            "click",
+            () => {
+
+                alert(
+                    "Más adelante añadiremos esta canción a la Biblioteca de AURA."
+                );
+
+            }
+        );
+
+
+        actions.appendChild(
+            playButton
+        );
+
+
+        actions.appendChild(
+            addButton
+        );
+
+
+        result.appendChild(
+            thumbnail
+        );
+
+
+        result.appendChild(
+            info
+        );
+
+
+        result.appendChild(
+            actions
+        );
+
+
+        results.appendChild(
+            result
+        );
+
+    }
+
+
+    // ==========================================
+    // DURACIÓN
+    // ==========================================
+
+    function formatDuration(
+        seconds
+    ) {
+
+        if (
+            !seconds ||
+            seconds < 0
+        ) {
+
+            return "";
+
+        }
+
+
+        const minutes =
+            Math.floor(
+                seconds / 60
+            );
+
+
+        const remaining =
+            Math.floor(
+                seconds % 60
+            )
+            .toString()
+            .padStart(
+                2,
+                "0"
+            );
+
+
+        return `${minutes}:${remaining}`;
+
+    }
+
+
+    // ==========================================
+    // EVENTOS
+    // ==========================================
+
+    searchButton.addEventListener(
+        "click",
+        searchPiped
+    );
+
+
+    searchInput.addEventListener(
+        "keydown",
+        event => {
+
+            if (
+                event.key === "Enter"
+            ) {
+
+                searchPiped();
+
+            }
+
+        }
+    );
+
+</script>
+
+
+</body>
+
+</html>
