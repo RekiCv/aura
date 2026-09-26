@@ -1,12 +1,34 @@
 import sys
 import webview
 from pathlib import Path
+import re
 import shutil
 import tkinter as tk
 from tkinter import filedialog
 import json
 
 from mutagen import File as MutagenFile
+
+
+# ==========================================
+# MÚSICA ONLINE
+# ==========================================
+
+PIPED_SERVICE_ERROR = None
+
+try:
+
+    import piped_service
+
+except Exception as error:
+
+    piped_service = None
+
+    PIPED_SERVICE_ERROR = str(error)
+
+    print(
+        f"AURA no puede buscar música online: {error}"
+    )
 
 
 # ==========================================
@@ -49,6 +71,10 @@ PLAYLISTS_DIR = APP_DIR / "playlists"
 PLAYLISTS_DIR.mkdir(
     parents=True,
     exist_ok=True
+)
+
+VIDEO_ID_PATTERN = re.compile(
+    r"^[A-Za-z0-9_-]{11}$"
 )
 
 
@@ -387,6 +413,62 @@ class AuraAPI:
         return PLAYLISTS_DIR / f"{playlist_id}.json"
 
 
+    def _normalize_playlist(self, playlist):
+        """Las playlists antiguas solo tenían 'songs'."""
+
+        playlist.setdefault("songs", [])
+
+        playlist.setdefault("online", [])
+
+        return playlist
+
+
+    def _load_playlist(self, playlist_id):
+
+        path = self._playlist_path(
+            playlist_id
+        )
+
+        if not path.exists():
+            return None
+
+        try:
+
+            with open(
+                path,
+                "r",
+                encoding="utf-8"
+            ) as playlist_file:
+
+                return self._normalize_playlist(
+                    json.load(playlist_file)
+                )
+
+        except Exception as error:
+
+            print(
+                f"Error leyendo playlist {playlist_id}: {error}"
+            )
+
+            return None
+
+
+    def _save_playlist(self, playlist):
+
+        with open(
+            self._playlist_path(playlist["id"]),
+            "w",
+            encoding="utf-8"
+        ) as playlist_file:
+
+            json.dump(
+                self._normalize_playlist(playlist),
+                playlist_file,
+                ensure_ascii=False,
+                indent=4
+            )
+
+
     def get_playlists(self):
 
         playlists = []
@@ -464,23 +546,13 @@ class AuraAPI:
         playlist = {
             "id": playlist_id,
             "name": name,
-            "songs": []
+            "songs": [],
+            "online": []
         }
 
         try:
 
-            with open(
-                self._playlist_path(playlist_id),
-                "w",
-                encoding="utf-8"
-            ) as playlist_file:
-
-                json.dump(
-                    playlist,
-                    playlist_file,
-                    ensure_ascii=False,
-                    indent=4
-                )
+            self._save_playlist(playlist)
 
             return {
                 "success": True,
@@ -497,32 +569,9 @@ class AuraAPI:
 
     def get_playlist(self, playlist_id):
 
-        path = self._playlist_path(
+        return self._load_playlist(
             playlist_id
         )
-
-        if not path.exists():
-            return None
-
-        try:
-
-            with open(
-                path,
-                "r",
-                encoding="utf-8"
-            ) as playlist_file:
-
-                return json.load(
-                    playlist_file
-                )
-
-        except Exception as error:
-
-            print(
-                f"Error leyendo playlist: {error}"
-            )
-
-            return None
 
 
     def add_song_to_playlist(
@@ -638,6 +687,127 @@ class AuraAPI:
             }
 
 
+    # ======================================
+    # CANCIONES ONLINE EN PLAYLISTS
+    # ======================================
+
+    def add_online_song_to_playlist(
+        self,
+        playlist_id,
+        song
+    ):
+
+        playlist = self._load_playlist(
+            playlist_id
+        )
+
+        if playlist is None:
+            return {
+                "success": False,
+                "error": "La playlist no existe."
+            }
+
+        if not isinstance(song, dict):
+            return {
+                "success": False,
+                "error": "La canción no es válida."
+            }
+
+        video_id = str(
+            song.get("videoId", "")
+        ).strip()
+
+        if not VIDEO_ID_PATTERN.match(video_id):
+            return {
+                "success": False,
+                "error": "La canción no es válida."
+            }
+
+        for saved in playlist["online"]:
+
+            if saved.get("videoId") == video_id:
+
+                return {
+                    "success": False,
+                    "error": "La canción ya está en la playlist."
+                }
+
+        playlist["online"].append({
+
+            "videoId": video_id,
+
+            "title": str(
+                song.get("title", "")
+            ).strip()[:200],
+
+            "artist": str(
+                song.get("artist", "")
+            ).strip()[:200],
+
+        })
+
+        try:
+
+            self._save_playlist(playlist)
+
+            return {
+                "success": True,
+                "playlist": playlist
+            }
+
+        except Exception as error:
+
+            return {
+                "success": False,
+                "error": str(error)
+            }
+
+
+    def remove_online_song_from_playlist(
+        self,
+        playlist_id,
+        video_id
+    ):
+
+        playlist = self._load_playlist(
+            playlist_id
+        )
+
+        if playlist is None:
+            return {
+                "success": False,
+                "error": "La playlist no existe."
+            }
+
+        video_id = str(
+            video_id
+        ).strip()
+
+        playlist["online"] = [
+
+            song
+            for song in playlist["online"]
+            if song.get("videoId") != video_id
+
+        ]
+
+        try:
+
+            self._save_playlist(playlist)
+
+            return {
+                "success": True,
+                "playlist": playlist
+            }
+
+        except Exception as error:
+
+            return {
+                "success": False,
+                "error": str(error)
+            }
+
+
     def delete_playlist(self, playlist_id):
 
         path = self._playlist_path(
@@ -667,6 +837,77 @@ class AuraAPI:
             }
 
 
+    # ======================================
+    # MÚSICA ONLINE
+    # ======================================
+
+    def _online_unavailable(self):
+
+        return {
+
+            "success": False,
+
+            "error":
+                "AURA no puede buscar música "
+                f"online. {PIPED_SERVICE_ERROR}",
+
+            "items": []
+
+        }
+
+
+    def search_online(self, query):
+
+        if piped_service is None:
+
+            return self._online_unavailable()
+
+        return piped_service.search(query)
+
+
+    def get_online_stream(self, video_id):
+      
+        if piped_service is None:
+      
+            return {
+      
+                "success": False,
+      
+                "error":
+                    "AURA no puede buscar m�sica "
+                    f"online. {PIPED_SERVICE_ERROR}"
+      
+            }
+      
+        return piped_service.get_audio_stream(video_id)
+      
+      
+    def get_related(self, video_id, title, artist):
+      
+        if piped_service is None:
+      
+            return {
+      
+                "success": False,
+      
+                "error":
+                    "AURA no puede buscar m�sica "
+                    f"online. {PIPED_SERVICE_ERROR}",
+      
+                "items": []
+      
+            }
+      
+        return piped_service.get_related(
+      
+            video_id,
+      
+            title,
+      
+            artist
+        )
+
+
 # ==========================================
 # VENTANA
 # ==========================================
@@ -681,4 +922,6 @@ window = webview.create_window(
     js_api=api
 )
 
-webview.start()
+if __name__ == "__main__":
+
+    webview.start()

@@ -49,8 +49,10 @@ echo.
     --onefile ^
     --windowed ^
     --name AURA ^
+    --icon "assets\aura.ico" ^
     --add-data "frontend;frontend" ^
     --add-data "library;library" ^
+    --add-data "assets;assets" ^
     "backend\main.py"
 
 if errorlevel 1 (

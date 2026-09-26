@@ -10,10 +10,17 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>AURA — Biblioteca</title>
+    <title>AURA â€” Biblioteca</title>
 
     <link
         href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <link rel="icon" href="../assets/aura.png">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Alien+Block&display=swap"
         rel="stylesheet"
     >
 
@@ -44,7 +51,7 @@
                     class="nav-item"
                     onclick="window.location.href='menu.html'"
                 >
-                    <span>⌂</span>
+                    <span>âŒ‚</span>
                     Inicio
                 </button>
 
@@ -53,7 +60,7 @@
                     class="nav-item active"
                     onclick="window.location.href='library.html'"
                 >
-                    <span>♫</span>
+                    <span>â™«</span>
                     Biblioteca
                 </button>
 
@@ -96,7 +103,7 @@
                     class="nav-item"
                     onclick="window.location.href='settings.html'"
                 >
-                    <span>⚙</span>
+                    <span>âš™</span>
                     Ajustes
                 </button>
 
@@ -117,7 +124,7 @@
                 <div>
 
                     <p class="greeting">
-                        TU MÚSICA
+                        TU MÃšSICA
                     </p>
 
                     <h1>
@@ -125,7 +132,7 @@
                     </h1>
 
                     <p class="page-description">
-                        Toda tu colección en un solo lugar.
+                        Toda tu colecciÃ³n en un solo lugar.
                     </p>
 
                 </div>
@@ -135,7 +142,7 @@
                     class="add-music-button"
                     id="addMusicButton"
                 >
-                    + Añadir música
+                    + AÃ±adir mÃºsica
                 </button>
 
             </header>
@@ -151,13 +158,13 @@
                 <div class="search-box">
 
                     <span class="search-icon">
-                        ⌕
+                        âŒ•
                     </span>
 
                     <input
                         type="text"
                         id="searchInput"
-                        placeholder="Buscar música..."
+                        placeholder="Buscar mÃºsica..."
                     >
 
                 </div>
@@ -177,7 +184,7 @@
                         class="filter"
                         data-filter="albums"
                     >
-                        Álbumes
+                        Ãlbumes
                     </button>
 
 
@@ -206,7 +213,7 @@
 
 
                         <option value="newest">
-                            Añadido recientemente
+                            AÃ±adido recientemente
                         </option>
 
                     </select>
@@ -248,22 +255,22 @@
                     <div class="empty-library">
 
                         <div class="empty-icon">
-                            ♫
+                            â™«
                         </div>
 
                         <h3>
-                            Tu biblioteca está vacía
+                            Tu biblioteca estÃ¡ vacÃ­a
                         </h3>
 
                         <p>
-                            Añade música para empezar.
+                            AÃ±ade mÃºsica para empezar.
                         </p>
 
                         <button
                             id="emptyAddButton"
                             class="primary-button"
                         >
-                            Añadir música
+                            AÃ±adir mÃºsica
                         </button>
 
                     </div>
@@ -285,19 +292,19 @@
             <div class="now-playing">
 
                 <div class="mini-art">
-                    ♫
+                    â™«
                 </div>
 
 
                 <div class="now-playing-info">
 
                     <strong id="currentTitle">
-                        Nada reproduciéndose
+                        Nada reproduciÃ©ndose
                     </strong>
 
 
                     <span id="currentArtist">
-                        Selecciona una canción
+                        Selecciona una canciÃ³n
                     </span>
 
                 </div>
@@ -313,7 +320,7 @@
                         id="rewindButton"
                         title="Retroceder 10 segundos"
                     >
-                        ↶
+                        â†¶
                     </button>
 
 
@@ -322,7 +329,7 @@
                         class="main-play"
                         title="Reproducir"
                     >
-                        ▶
+                        â–¶
                     </button>
 
 
@@ -330,7 +337,7 @@
                         id="forwardButton"
                         title="Avanzar 10 segundos"
                     >
-                        ↷
+                        â†·
                     </button>
 
                 </div>
@@ -346,7 +353,7 @@
                     <div
                         class="progress-bar"
                         id="progressBar"
-                        title="Buscar en la canción"
+                        title="Buscar en la canciÃ³n"
                     >
 
                         <div
@@ -365,11 +372,20 @@
 
             </div>
 
-
-            <div class="volume">
-
-                <span id="volumeIcon">
-                    ♫
+<div class="volume">
+   
+   <button
+    class="radio-button active"
+    id="autoRecommendButton"
+    type="button"
+    title="Recomendaciones automÃ¡ticas"
+   >
+    âˆž
+   </button>
+   
+   <span id="volumeIcon">
+   
+                    â™«
                 </span>
 
 
@@ -390,7 +406,7 @@
 
 
         <!-- ==========================================
-             MENÚ AÑADIR A PLAYLIST
+             MENÃš AÃ‘ADIR A PLAYLIST
         =========================================== -->
 
         <div
@@ -412,7 +428,7 @@
                         </p>
 
                         <h3>
-                            Añadir a lista
+                            AÃ±adir a lista
                         </h3>
 
                     </div>
@@ -422,7 +438,7 @@
                         id="closePlaylistMenu"
                         class="modal-close"
                     >
-                        ×
+                        Ã—
                     </button>
 
                 </div>
@@ -452,7 +468,7 @@
 
 
         <!-- ==========================================
-             VENTANA DE EDICIÓN
+             VENTANA DE EDICIÃ“N
         =========================================== -->
 
         <div
@@ -467,11 +483,11 @@
                     <div>
 
                         <p class="modal-eyebrow">
-                            INFORMACIÓN DE LA CANCIÓN
+                            INFORMACIÃ“N DE LA CANCIÃ“N
                         </p>
 
                         <h2>
-                            Editar canción
+                            Editar canciÃ³n
                         </h2>
 
                     </div>
@@ -481,7 +497,7 @@
                         class="modal-close"
                         id="closeEditModal"
                     >
-                        ×
+                        Ã—
                     </button>
 
                 </div>
@@ -490,7 +506,7 @@
                 <div class="edit-form">
 
                     <label>
-                        Título
+                        TÃ­tulo
 
                         <input
                             type="text"
@@ -510,7 +526,7 @@
 
 
                     <label>
-                        Álbum
+                        Ãlbum
 
                         <input
                             type="text"
@@ -520,7 +536,7 @@
 
 
                     <label>
-                        Artista del álbum
+                        Artista del Ã¡lbum
 
                         <input
                             type="text"
@@ -532,7 +548,7 @@
                     <div class="form-row">
 
                         <label>
-                            Género
+                            GÃ©nero
 
                             <input
                                 type="text"
@@ -542,7 +558,7 @@
 
 
                         <label>
-                            Año
+                            AÃ±o
 
                             <input
                                 type="text"
@@ -556,7 +572,7 @@
                     <div class="form-row">
 
                         <label>
-                            Nº de pista
+                            NÂº de pista
 
                             <input
                                 type="text"
@@ -566,7 +582,7 @@
 
 
                         <label>
-                            Nº de disco
+                            NÂº de disco
 
                             <input
                                 type="text"
@@ -637,6 +653,9 @@
         >
 
     </div>
+
+
+    <script src="player-state.js"></script>
 
 
     <script src="library.js"></script>

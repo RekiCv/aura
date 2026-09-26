@@ -17,6 +17,13 @@
         rel="stylesheet"
     >
 
+    <link rel="icon" href="../assets/aura.png">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Alien+Block&display=swap"
+        rel="stylesheet"
+    >
+
     <link rel="stylesheet" href="menu.css">
 
 </head>
@@ -44,7 +51,7 @@
                     class="nav-item active"
                     onclick="window.location.href='menu.html'"
                 >
-                    <span>⌂</span>
+                    <span>âŒ‚</span>
                     Inicio
                 </button>
 
@@ -53,7 +60,7 @@
                     class="nav-item"
                     onclick="window.location.href='library.html'"
                 >
-                    <span>♫</span>
+                    <span>â™«</span>
                     Biblioteca
                 </button>
 
@@ -95,7 +102,7 @@
                     class="nav-item"
                     onclick="window.location.href='settings.html'"
                 >
-                    <span>⚙</span>
+                    <span>âš™</span>
                     Ajustes
                 </button>
 
@@ -120,14 +127,40 @@
                     </p>
 
                     <h1>
-                        Tu música.
+                        Tu mÃºsica.
                     </h1>
 
                 </div>
 
 
+                <div class="online-search">
+
+                    <span class="search-icon">
+                        âŒ•
+                    </span>
+
+
+                    <input
+                        type="text"
+                        id="onlineSearchInput"
+                        placeholder="Buscar mÃºsica en YouTube..."
+                        autocomplete="off"
+                    >
+
+
+                    <button
+                        id="onlineSearchButton"
+                        class="search-button"
+                        title="Buscar"
+                    >
+                        Buscar
+                    </button>
+
+                </div>
+
+
                 <button class="profile-button">
-                    ◉
+                    â—‰
                 </button>
 
             </header>
@@ -139,7 +172,7 @@
                 <div class="hero-content">
 
                     <p class="eyebrow">
-                        TU COLECCIÓN
+                        TU COLECCIÃ“N
                     </p>
 
                     <h2>
@@ -148,20 +181,50 @@
                     </h2>
 
                     <p class="hero-description">
-                        Toda tu música, en un solo lugar.
+                        Toda tu mÃºsica, en un solo lugar.
                     </p>
 
                     <button
                         class="primary-button"
                         onclick="window.location.href='library.html'"
                     >
-                        Explorar música
+                        Explorar mÃºsica
                     </button>
 
                 </div>
 
 
                 <div class="hero-orb"></div>
+
+            </section>
+
+
+
+            <!-- ==========================================
+                 MÃšSICA ONLINE
+            =========================================== -->
+
+            <section
+                class="online-section"
+                id="onlineSection"
+                hidden
+            >
+
+                <div class="section-header">
+
+                    <h2>
+                        Resultados
+                    </h2>
+
+                    <span id="onlineStatus"></span>
+
+                </div>
+
+
+                <div
+                    class="online-list"
+                    id="onlineList"
+                ></div>
 
             </section>
 
@@ -211,16 +274,18 @@
 
             <div class="now-playing">
 
-                <div class="mini-art"></div>
+                <div class="mini-art">
+                    â™«
+                </div>
 
-                <div>
+                <div class="now-playing-info">
 
-                    <strong>
-                        Nada reproduciéndose
+                    <strong id="currentTitle">
+                        Nada reproduciÃ©ndose
                     </strong>
 
-                    <span>
-                        Selecciona una canción
+                    <span id="currentArtist">
+                        Selecciona una canciÃ³n
                     </span>
 
                 </div>
@@ -228,38 +293,96 @@
             </div>
 
 
-            <div class="player-controls">
+            <div class="player-center">
 
-                <button>
-                    ↶
-                </button>
+                <div class="player-controls">
 
-                <button class="main-play">
-                    ▶
-                </button>
+                    <button
+                        id="rewindButton"
+                        title="Retroceder 10 segundos"
+                    >
+                        â†¶
+                    </button>
 
-                <button>
-                    ↷
-                </button>
+
+                    <button
+                        id="playButton"
+                        class="main-play"
+                        title="Reproducir"
+                    >
+                        â–¶
+                    </button>
+
+
+                    <button
+                        id="forwardButton"
+                        title="Avanzar 10 segundos"
+                    >
+                        â†·
+                    </button>
+
+                </div>
+
+
+                <div class="time-info">
+
+                    <span id="currentTime">
+                        0:00
+                    </span>
+
+
+                    <div
+                        class="progress-bar"
+                        id="progressBar"
+                        title="Buscar en la canciÃ³n"
+                    >
+
+                        <div
+                            class="progress-fill"
+                            id="progressFill"
+                        ></div>
+
+                    </div>
+
+
+                    <span id="duration">
+                        0:00
+                    </span>
+
+                </div>
 
             </div>
 
-
-            <div class="volume">
-
-                <span>
-                    ♪
+<div class="volume">
+   
+   <button
+    class="radio-button active"
+    id="autoRecommendButton"
+    type="button"
+    title="Recomendaciones automÃ¡ticas"
+   >
+    âˆž
+   </button>
+   
+   <span>
+    
+                    â™ª
                 </span>
 
-                <div class="volume-line">
+                <div
+                    class="volume-line"
+                    id="volumeLine"
+                    title="Volumen"
+                >
 
-                    <div></div>
+                    <div id="volumeFill"></div>
 
                 </div>
 
             </div>
 
         </footer>
+
 
 
 
@@ -293,7 +416,7 @@
                         id="closePlaylistModal"
                         class="modal-close"
                     >
-                        ×
+                        Ã—
                     </button>
 
                 </div>
@@ -340,7 +463,72 @@
 
         </div>
 
+
+
+        <!-- ==========================================
+             MENÃš AÃ‘ADIR A PLAYLIST
+        =========================================== -->
+
+        <div
+            class="playlist-menu-overlay"
+            id="playlistMenuOverlay"
+        >
+
+            <div
+                class="playlist-menu"
+                id="playlistMenu"
+            >
+
+                <div class="playlist-menu-header">
+
+                    <div>
+
+                        <p>
+                            PLAYLISTS
+                        </p>
+
+                        <h3>
+                            AÃ±adir a lista
+                        </h3>
+
+                    </div>
+
+
+                    <button
+                        id="closePlaylistMenu"
+                        class="modal-close"
+                    >
+                        Ã—
+                    </button>
+
+                </div>
+
+
+                <div
+                    id="playlistMenuList"
+                    class="playlist-menu-list"
+                ></div>
+
+
+                <button
+                    id="createPlaylistFromMenu"
+                    class="create-playlist-option"
+                >
+                    <span>
+                        +
+                    </span>
+
+                    Nueva playlist
+                </button>
+
+            </div>
+
+        </div>
+
     </div>
+
+
+    <script src="player-state.js"></script>
 
 
     <script src="menu.js"></script>

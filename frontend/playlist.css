@@ -76,11 +76,13 @@ button {
 
     margin-bottom: 38px;
 
-    font-size: 27px;
+    font-family: "Alien Block", sans-serif;
 
-    font-weight: 700;
+    font-size: 24px;
 
-    letter-spacing: 5px;
+    font-weight: 400;
+
+    letter-spacing: 3px;
 }
 
 
@@ -930,4 +932,229 @@ nav {
     background: #9b59ff;
 
     color: white;
+}
+
+/* ==========================================
+   REPRODUCTOR
+========================================== */
+
+.player-center {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    gap: 7px;
+}
+
+
+.time-info {
+
+    width: 310px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    color: #5e5964;
+
+    font-size: 9px;
+}
+
+
+.progress-bar {
+
+    flex: 1;
+
+    height: 3px;
+
+    overflow: hidden;
+
+    border-radius: 10px;
+
+    background: rgba(255, 255, 255, 0.1);
+
+    cursor: pointer;
+}
+
+
+.progress-fill {
+
+    width: 0%;
+
+    height: 100%;
+
+    background: #9b59ff;
+}
+
+
+/* ==========================================
+   CANCIONES ONLINE EN LA PLAYLIST
+========================================== */
+
+.song-badge {
+
+    flex-shrink: 0;
+
+    padding: 3px 8px;
+
+    border-radius: 20px;
+
+    background: rgba(155, 89, 255, 0.12);
+
+    color: #a873d0;
+
+    font-size: 8px;
+
+    font-weight: 600;
+
+    letter-spacing: 1px;
+}
+
+
+.song-item.offline .song-badge {
+
+    background: rgba(255, 255, 255, 0.05);
+
+    color: #56515c;
+}
+
+
+.song-item.offline {
+
+    opacity: 0.5;
+}
+
+
+.offline-note {
+
+    color: #6b6570;
+
+    font-size: 10px;
+}
+
+
+.offline-note[hidden] {
+
+    display: none;
+}
+
+
+/* ==========================================
+   AVISO
+========================================== */
+
+.aura-toast {
+
+    position: fixed;
+
+    left: 50%;
+
+    bottom: 115px;
+
+    transform:
+        translate(-50%, 15px);
+
+    padding: 11px 17px;
+
+    border-radius: 9px;
+
+    background: rgba(25, 21, 32, 0.97);
+
+    border: 1px solid rgba(155, 89, 255, 0.2);
+
+    color: #d2cbd9;
+
+    font-size: 10px;
+
+    opacity: 0;
+
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+
+    pointer-events: none;
+
+    z-index: 200;
+}
+
+
+.aura-toast.show {
+
+    opacity: 1;
+
+    transform: translate(-50%, 0);
+}
+
+
+.playlist-songs .song-item {
+
+    cursor: pointer;
+}
+
+
+.song-item.playing {
+
+    background: rgba(155, 89, 255, 0.12);
+}
+
+
+.song-item:hover .remove-song {
+
+    opacity: 1;
+}
+
+
+/* ==========================================
+   BOTÃ“N DE RADIO
+========================================== */
+
+.radio-button {
+
+    width: 30px;
+
+    height: 30px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(255, 255, 255, 0.14);
+
+    background: transparent;
+
+    color: rgba(255, 255, 255, 0.32);
+
+    font-size: 15px;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+
+}
+
+
+.radio-button:hover {
+
+    color: #ffffff;
+
+    border-color: rgba(255, 255, 255, 0.4);
+
+}
+
+
+.radio-button.active {
+
+    color: #ffffff;
+
+    background: rgba(155, 89, 255, 0.85);
+
+    border-color: transparent;
+
 }

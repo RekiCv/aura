@@ -1,263 +1,477 @@
-import json
-import urllib.parse
-import urllib.request
+# ==========================================
+# AURA · MÚSICA ONLINE
+# ==========================================
+#
+# ANTES: este servicio usaba Piped
+# (https://piped.video).
+#
+# Piped ya no tiene instancias públicas
+# que funcionen. De la lista oficial
+# solo sobreviven dos, y devuelven
+# el vídeo sin audio:
+#
+#   pipedapi.ducks.party     -> audioStreams: []
+#   api.piped.private.coffee -> audioStreams: []
+#
+# Por eso AURA usa ahora yt-dlp,
+# que sigue extrayendo el audio
+# correctamente. La interfaz de este
+# archivo no ha cambiado, así que
+# piped_app_test.py y piped.html
+# siguen funcionando igual.
+# ==========================================
+
+import re
+
+import yt_dlp
 
 
 # ==========================================
-# INSTANCIAS PIPED
+# AJUSTES
 # ==========================================
 
-PIPED_INSTANCES = [
-
-    "https://pipedapi.ducks.party",
-
-    "https://pipedapi.kavin.rocks",
-
-    "https://pipedapi.leptons.xyz",
-
-    "https://pipedapi.adminforge.de",
-
-    "https://pipedapi.drgns.space",
-
-    "https://pipedapi.owo.si",
-
-    "https://api.piped.yt"
-
-]
+ENGINE_NAME = "YouTube (yt-dlp)"
 
 
-active_instance = None
+SEARCH_LIMIT = 20
+
+
+TIMEOUT = 20
+
+
+VIDEO_ID_PATTERN = re.compile(
+    r"^[A-Za-z0-9_-]{1,64}$"
+)
+
+
+ERROR_PREFIX_PATTERN = re.compile(
+    r"^ERROR:\s*"
+    r"(\[[^\]]+\]\s*)?"
+)
 
 
 # ==========================================
-# PETICIONES
+# ERRORES
 # ==========================================
 
-def request_json(url):
-
-    request = urllib.request.Request(
-        url,
-        headers={
-            "User-Agent": "AURA/1.0"
-        }
+def friendly_error(
+    error
+):
+    text = str(
+        error
     )
 
-    with urllib.request.urlopen(
-        request,
-        timeout=15
-    ) as response:
 
-        return json.loads(
-            response.read().decode("utf-8")
+    text = ERROR_PREFIX_PATTERN.sub(
+        "",
+        text
+    ).strip()
+
+
+    # ==================================
+    # TRADUCCIONES
+    # ==================================
+
+    translations = [
+
+        (
+            (
+                "Sign in to confirm",
+                "not a bot",
+                "Sign in to view"
+            ),
+
+            "YouTube pide verificación. "
+            "Prueba con otra canción."
+
+        ),
+
+        (
+            "Private video",
+
+            "Ese vídeo es privado."
+        ),
+
+        (
+            (
+                "video is unavailable",
+                "Video unavailable",
+                "has been removed"
+            ),
+
+            "Ese vídeo ya no está "
+            "disponible."
+
+        ),
+
+        (
+            (
+                "members-only",
+                "join this channel"
+            ),
+
+            "Ese vídeo es para "
+            "miembros del canal."
+        ),
+
+        (
+            (
+                "This live event",
+                "premieres in"
+            ),
+
+            "Ese vídeo aún no "
+            "se ha emitido."
+        ),
+
+        (
+            "HTTP Error 429",
+
+            "YouTube está limitando "
+            "las peticiones. Espera "
+            "un momento."
+
+        ),
+
+        (
+            (
+                "Unable to download webpage",
+                "Connection refused",
+                "Name or service not known",
+                "Temporary failure in name resolution"
+            ),
+
+            "No hay conexión con "
+            "YouTube."
+
+        ),
+
+        (
+            "Sign in",
+
+            "YouTube pide verificación. "
+            "Prueba con otra canción."
+        )
+
+    ]
+
+
+    for patterns, message in translations:
+
+        if isinstance(
+            patterns,
+            str
+        ):
+
+            patterns = (patterns,)
+
+
+        for pattern in patterns:
+
+            if pattern in text:
+
+                return message
+
+
+    if not text:
+
+        return (
+            "Error desconocido de yt-dlp."
         )
 
 
+    return text
+
+
 # ==========================================
-# BUSCAR INSTANCIA DISPONIBLE
+# OPCIONES DE YOUTUBE-DL
 # ==========================================
 
-def find_working_instance():
+class QuietLogger:
 
-    global active_instance
+    def debug(
+        self,
+        message
+    ):
+        pass
 
 
-    instances = []
+    def info(
+        self,
+        message
+    ):
+        pass
 
 
-    if active_instance:
+    def warning(
+        self,
+        message
+    ):
+        pass
 
-        instances.append(
-            active_instance
+
+    def error(
+        self,
+        message
+    ):
+        pass
+
+
+def get_options(
+    extract_flat=False
+):
+    return {
+
+        "quiet": True,
+
+        "no_warnings": True,
+
+        "noprogress": True,
+
+        "noplaylist": True,
+
+        "skip_download": True,
+
+        "socket_timeout": TIMEOUT,
+
+        "ignoreerrors": False,
+
+        "logger": QuietLogger(),
+
+        "extract_flat": extract_flat
+
+    }
+
+
+# ==========================================
+# MINIATURA
+# ==========================================
+
+def get_thumbnail(
+    entry
+):
+    thumbnails = (
+        entry.get(
+            "thumbnails"
+        )
+        or []
+    )
+
+
+    if thumbnails:
+
+        return (
+            thumbnails[0].get(
+                "url",
+                ""
+            )
         )
 
 
-    for instance in PIPED_INSTANCES:
+    video_id = (
+        entry.get(
+            "id",
+            ""
+        )
+    )
 
-        if instance not in instances:
 
-            instances.append(
-                instance
+    if video_id:
+
+        return (
+            "https://i.ytimg.com/vi/"
+            f"{video_id}/hqdefault.jpg"
+        )
+
+
+    return ""
+
+
+# ==========================================
+# ARTISTA
+# ==========================================
+
+def get_artist(
+    entry
+):
+    for key in (
+
+        "channel",
+        "uploader",
+        "artist"
+
+    ):
+
+        value = (
+            entry.get(
+                key
+            )
+        )
+
+
+        if value:
+
+            return str(
+                value
             )
 
 
-    for instance in instances:
+    return "Desconocido"
 
-        try:
 
-            test_url = (
-                f"{instance}"
-                "/search?q=test&filter=videos"
+# ==========================================
+# CONVERTIR RESULTADO
+# ==========================================
+
+def to_item(
+    entry
+):
+    video_id = str(
+        entry.get(
+            "id",
+            ""
+        )
+    )
+
+
+    return {
+
+        "type": "youtube",
+
+        "videoId": video_id,
+
+        "title": str(
+            entry.get(
+                "title",
+                "Sin título"
             )
+        ),
 
+        "artist": get_artist(
+            entry
+        ),
 
-            data = request_json(
-                test_url
+        "thumbnail": get_thumbnail(
+            entry
+        ),
+
+        "duration": int(
+            entry.get(
+                "duration"
             )
+            or 0
+        ),
 
+        "url": (
+            "https://www.youtube.com"
+            f"/watch?v={video_id}"
+        ),
 
-            if isinstance(
-                data,
-                dict
-            ):
+        "source": ENGINE_NAME,
 
-                active_instance = (
-                    instance
-                )
+        "pipedInstance": ENGINE_NAME
 
-
-                print(
-                    f"Piped activo: {instance}"
-                )
-
-
-                return instance
-
-
-        except Exception as error:
-
-            print(
-                f"Piped no disponible "
-                f"{instance}: {error}"
-            )
-
-
-    active_instance = None
-
-    return None
+    }
 
 
 # ==========================================
 # BUSCAR
 # ==========================================
 
-def search(query):
+def search(
+    query
+):
+    query = str(
+        query or ""
+    ).strip()
+
 
     if not query:
 
         return {
+
             "success": False,
+
             "error": "La búsqueda está vacía.",
+
             "items": []
+
         }
 
 
-    instance = (
-        find_working_instance()
-    )
-
-
-    if not instance:
-
-        return {
-            "success": False,
-            "error":
-                "No hay ninguna instancia "
-                "de Piped disponible.",
-            "items": []
-        }
-
-
-    params = urllib.parse.urlencode({
-
-        "q": query,
-
-        "filter": "videos"
-
-    })
-
-
-    url = (
-        f"{instance}"
-        f"/search?{params}"
+    target = (
+        f"ytsearch{SEARCH_LIMIT}:{query}"
     )
 
 
     try:
 
-        data = request_json(
-            url
+        with yt_dlp.YoutubeDL(
+            get_options(
+                extract_flat=True
+            )
+        ) as youtube_dl:
+
+            data = youtube_dl.extract_info(
+                target,
+                download=False
+            )
+
+
+        entries = (
+            data.get(
+                "entries"
+            )
+            or []
         )
 
 
         items = []
 
 
-        for item in data.get(
-            "items",
-            []
-        ):
+        for entry in entries:
 
-            video_url = (
-                item.get(
-                    "url",
-                    ""
+            if not entry:
+
+                continue
+
+
+            if not entry.get(
+                "id"
+            ):
+
+                continue
+
+
+            items.append(
+                to_item(
+                    entry
                 )
             )
 
 
-            video_id = ""
+        if not items:
 
+            return {
 
-            if video_url.startswith(
-                "/watch?v="
-            ):
+                "success": False,
 
-                video_id = (
-                    video_url
-                    .split(
-                        "/watch?v=",
-                        1
-                    )[1]
-                )
+                "error":
+                    "No se encontró nada "
+                    "para esa búsqueda.",
 
+                "instance": ENGINE_NAME,
 
-            items.append({
+                "items": []
 
-                "type": "youtube",
-
-                "videoId": video_id,
-
-                "title":
-                    item.get(
-                        "title",
-                        "Sin título"
-                    ),
-
-                "artist":
-                    item.get(
-                        "uploaderName",
-                        "Desconocido"
-                    ),
-
-                "thumbnail":
-                    item.get(
-                        "thumbnail",
-                        ""
-                    ),
-
-                "duration":
-                    item.get(
-                        "duration",
-                        0
-                    ),
-
-                "url":
-                    video_url,
-
-                "source":
-                    "piped",
-
-                "pipedInstance":
-                    instance
-
-            })
+            }
 
 
         return {
 
             "success": True,
 
-            "instance": instance,
+            "instance": ENGINE_NAME,
 
             "items": items
 
@@ -266,23 +480,227 @@ def search(query):
 
     except Exception as error:
 
-        if (
-            active_instance
-            == instance
-        ):
-
-            active_instance = None
-
-
         return {
 
             "success": False,
 
-            "error": str(error),
+            "error": friendly_error(
+                error
+            ),
+
+            "instance": ENGINE_NAME,
 
             "items": []
 
         }
+
+
+# ==========================================
+# ELEGIR FORMATO DE AUDIO
+# ==========================================
+
+def get_format_rank(
+    format_entry
+):
+    codec = str(
+        format_entry.get(
+            "acodec"
+        )
+        or ""
+    ).lower()
+
+
+    if (
+        codec.startswith(
+            "mp4a"
+        )
+        or codec == "aac"
+    ):
+
+        return 0
+
+
+    if "opus" in codec:
+
+        return 1
+
+
+    if (
+        "vorbis" in codec
+        or codec == "mp3"
+    ):
+
+        return 2
+
+
+    return 3
+
+
+def get_format_bitrate(
+    format_entry
+):
+    for key in (
+
+        "abr",
+        "tbr",
+        "vbr"
+
+    ):
+
+        value = (
+            format_entry.get(
+                key
+            )
+        )
+
+
+        if value:
+
+            try:
+
+                return int(
+                    value
+                )
+
+            except (TypeError, ValueError):
+
+                continue
+
+
+    return 0
+
+
+def select_audio_format(
+    formats
+):
+    usable = [
+
+        format_entry
+
+        for format_entry in formats
+
+        if (
+            format_entry.get(
+                "url"
+            )
+            and format_entry.get(
+                "acodec"
+            )
+            not in (None, "none")
+        )
+
+    ]
+
+
+    if not usable:
+
+        return None
+
+
+    audio_only = [
+
+        format_entry
+
+        for format_entry in usable
+
+        if format_entry.get(
+            "vcodec"
+        ) in (None, "none")
+
+    ]
+
+
+    candidates = (
+        audio_only
+        if audio_only
+        else usable
+    )
+
+
+    candidates.sort(
+        key=lambda format_entry: (
+            get_format_rank(
+                format_entry
+            ),
+            -get_format_bitrate(
+                format_entry
+            )
+        )
+    )
+
+
+    return candidates[0]
+
+
+def get_mime_type(
+    format_entry
+):
+    mime_type = (
+        format_entry.get(
+            "mime_type"
+        )
+    )
+
+
+    if mime_type:
+
+        return str(
+            mime_type
+        )
+
+
+    extension = str(
+        format_entry.get(
+            "ext",
+            ""
+        )
+    ).lower()
+
+
+    if extension in ("m4a", "mp4", "m4b"):
+
+        return "audio/mp4"
+
+
+    if extension in ("webm", "weba"):
+
+        return "audio/webm"
+
+
+    if extension == "mp3":
+
+        return "audio/mpeg"
+
+
+    if not extension:
+
+        return ""
+
+
+    return f"audio/{extension}"
+
+
+def get_quality(
+    format_entry
+):
+    bitrate = get_format_bitrate(
+        format_entry
+    )
+
+
+    if bitrate:
+
+        return (
+            f"{int(bitrate)} kbps"
+        )
+
+
+    return str(
+        format_entry.get(
+            "format_note",
+            ""
+        )
+    )
 
 
 # ==========================================
@@ -292,6 +710,10 @@ def search(query):
 def get_audio_stream(
     video_id
 ):
+    video_id = str(
+        video_id or ""
+    ).strip()
+
 
     if not video_id:
 
@@ -305,141 +727,69 @@ def get_audio_stream(
         }
 
 
-    instance = (
-        find_working_instance()
-    )
-
-
-    if not instance:
+    if not VIDEO_ID_PATTERN.match(
+        video_id
+    ):
 
         return {
 
             "success": False,
 
             "error":
-                "No hay ninguna instancia "
-                "de Piped disponible."
+                "El identificador del "
+                "vídeo no es válido."
 
         }
 
 
     url = (
-        f"{instance}"
-        f"/streams/{video_id}"
+        "https://www.youtube.com"
+        f"/watch?v={video_id}"
     )
 
 
     try:
 
-        data = request_json(
-            url
-        )
+        with yt_dlp.YoutubeDL(
+            get_options()
+        ) as youtube_dl:
 
-
-        audio_streams = (
-            data.get(
-                "audioStreams",
-                []
+            data = youtube_dl.extract_info(
+                url,
+                download=False
             )
-        )
 
 
-        if not audio_streams:
+        if not data:
 
             return {
 
                 "success": False,
 
                 "error":
-                    "Piped no devolvió "
-                    "ningún stream de audio."
+                    "yt-dlp no devolvió "
+                    "información del vídeo."
 
             }
 
 
-        # ==================================
-        # FORMATOS PREFERIDOS
-        # ==================================
-
-        preferred_formats = [
-
-            "M4A",
-
-            "WEBMA",
-
-            "WEBMA_OPUS",
-
-            "OPUS",
-
-            "MP3"
-
-        ]
-
-
-        selected = None
-
-
-        for preferred in (
-            preferred_formats
-        ):
-
-            for stream in (
-                audio_streams
-            ):
-
-                stream_format = (
-                    str(
-                        stream.get(
-                            "format",
-                            ""
-                        )
-                    ).upper()
-                )
-
-
-                if (
-                    stream_format
-                    == preferred
-                ):
-
-                    selected = stream
-
-                    break
-
-
-            if selected:
-
-                break
-
-
-        # ==================================
-        # SI NO HAY FORMATO PREFERIDO
-        # ==================================
-
-        if selected is None:
-
-            selected = (
-                audio_streams[0]
+        selected = select_audio_format(
+            data.get(
+                "formats"
             )
-
-
-        stream_url = (
-            selected.get(
-                "url",
-                ""
-            )
+            or []
         )
 
 
-        if not stream_url:
+        if selected is None:
 
             return {
 
                 "success": False,
 
                 "error":
-                    "El stream no contiene "
-                    "una URL de audio."
+                    "No se encontró ningún "
+                    "formato de audio."
 
             }
 
@@ -448,59 +798,419 @@ def get_audio_stream(
 
             "success": True,
 
-            "videoId":
-                video_id,
+            "videoId": video_id,
 
             "url":
-                stream_url,
+                selected.get(
+                    "url",
+                    ""
+                ),
 
             "format":
                 selected.get(
-                    "format",
+                    "format_id",
                     ""
                 ),
 
-            "mimeType":
-                selected.get(
-                    "mimeType",
-                    ""
-                ),
+            "mimeType": get_mime_type(
+                selected
+            ),
 
-            "quality":
-                selected.get(
-                    "quality",
-                    ""
-                ),
+            "quality": get_quality(
+                selected
+            ),
 
-            "bitrate":
-                selected.get(
-                    "bitrate",
-                    0
-                ),
+            "bitrate": get_format_bitrate(
+                selected
+            ),
 
-            "instance":
-                instance
+            "duration": int(
+                data.get(
+                    "duration"
+                )
+                or 0
+            ),
+
+            "instance": ENGINE_NAME
 
         }
 
 
     except Exception as error:
 
-        if (
-            active_instance
-            == instance
-        ):
-
-            active_instance = None
-
-
         return {
 
             "success": False,
 
-            "error": str(error)
+            "error": friendly_error(
+                error
+            )
 
         }
+
+
+# ==========================================
+# CANCIONES RELACIONADAS
+# ==========================================
+#
+# YouTube genera una "radio" para cada
+# vídeo con el identificador RDAMVM:
+#
+#   https://www.youtube.com/watch?v=ID
+#   &list=RDAMVMID
+#
+# Esa lista es el algoritmo oficial de
+# recomendaciones, así que se usa
+# directamente. Sin videoId (canciones
+# locales) se recurre a una búsqueda por
+# artista + título.
+# ==========================================
+
+RELATED_LIMIT = 20
+
+
+RELATED_FETCH = 30
+
+
+MAX_RELATED_SECONDS = 900
+
+
+def get_radio_options(
+):
+    options = get_options(
+        extract_flat="in_playlist"
+    )
+
+
+    options["noplaylist"] = False
+
+    options["playlistend"] = RELATED_FETCH
+
+    return options
+
+
+def build_related_url(
+    video_id
+):
+    return (
+        "https://www.youtube.com/watch"
+        f"?v={video_id}"
+        f"&list=RDAMVM{video_id}"
+    )
+
+
+def is_usable_related(
+    entry,
+    seed_id
+):
+    if not entry:
+
+        return False
+
+
+    video_id = str(
+        entry.get(
+            "id",
+            ""
+        )
+    )
+
+
+    if (
+        not video_id
+        or video_id == seed_id
+    ):
+
+        return False
+
+
+    if not VIDEO_ID_PATTERN.match(
+        video_id
+    ):
+
+        return False
+
+
+    duration = int(
+        entry.get(
+            "duration"
+        )
+        or 0
+    )
+
+
+    if (
+        duration
+        and duration > MAX_RELATED_SECONDS
+    ):
+
+        return False
+
+
+    return True
+
+
+def related_by_radio(
+    video_id
+):
+    with yt_dlp.YoutubeDL(
+        get_radio_options()
+    ) as youtube_dl:
+
+        data = youtube_dl.extract_info(
+            build_related_url(
+                video_id
+            ),
+            download=False
+        )
+
+
+    return [
+        to_item(entry)
+        for entry in (
+            (data or {}).get(
+                "entries"
+            ) or []
+        )
+        if is_usable_related(
+            entry,
+            video_id
+        )
+    ]
+
+
+def normalize_text(
+    value
+):
+    return re.sub(
+        r"[^a-z0-9]+",
+        " ",
+        str(
+            value or ""
+        ).lower()
+    ).strip()
+def is_same_song(
+    item_title,
+    title
+):
+    seed = normalize_text(
+        title
+    )
+
+    candidate = normalize_text(
+        item_title
+    )
+
+
+    if not seed:
+
+        return False
+
+
+    if (
+        seed in candidate
+        or candidate in seed
+    ):
+
+        return True
+
+
+    return False
+
+
+def pick_seed(
+    items,
+    title
+):
+    for item in items:
+
+        if is_same_song(
+            item.get(
+                "title"
+            ),
+            title
+        ):
+
+            return item.get(
+                "videoId"
+            )
+
+
+    if items:
+
+        return items[0].get(
+            "videoId"
+        )
+
+
+    return ""
+
+
+def related_by_search(
+    title,
+    artist
+):
+    query = " ".join(
+        part
+        for part in (
+            str(artist or "").strip(),
+            str(title or "").strip()
+        )
+        if part
+    )
+
+    if not query:
+
+        return (
+            "",
+            []
+        )
+
+
+    result = search(
+        query
+    )
+
+    if not result.get(
+        "success"
+    ):
+
+        return (
+            "",
+            []
+        )
+
+
+    items = (
+        result.get(
+            "items"
+        ) or []
+    )
+
+
+    seed = pick_seed(
+        items,
+        title
+    )
+
+
+    fallback = [
+        item
+        for item in items
+        if not is_same_song(
+            item.get(
+                "title"
+            ),
+            title
+        )
+    ]
+
+
+    if not fallback:
+
+        fallback = items
+
+
+    return (
+        seed,
+        fallback
+    )
+
+
+def get_related(
+    video_id="",
+    title="",
+    artist=""
+):
+    video_id = str(
+        video_id or ""
+    ).strip()
+
+
+    fallback = []
+
+
+    if VIDEO_ID_PATTERN.match(
+        video_id
+    ):
+
+        seed = video_id
+
+    else:
+
+        try:
+
+            seed, fallback = (
+                related_by_search(
+                    title,
+                    artist
+                )
+            )
+
+        except Exception as error:
+
+            return {
+                "success": False,
+                "error": friendly_error(
+                    error
+                ),
+                "instance": ENGINE_NAME,
+                "items": []
+            }
+
+
+    if VIDEO_ID_PATTERN.match(
+        str(
+            seed or ""
+        )
+    ):
+
+        try:
+
+            items = related_by_radio(
+                seed
+            )
+
+        except Exception as error:
+
+            if fallback:
+
+                items = fallback
+
+            else:
+
+                return {
+                    "success": False,
+                    "error": friendly_error(
+                        error
+                    ),
+                    "instance": ENGINE_NAME,
+                    "items": []
+                }
+
+
+    else:
+
+        items = fallback
+
+
+    if not items:
+
+        return {
+            "success": False,
+            "error":
+                "No se encontraron "
+                "canciones relacionadas.",
+            "instance": ENGINE_NAME,
+            "items": []
+        }
+
+
+    return {
+        "success": True,
+        "instance": ENGINE_NAME,
+        "items": items[:RELATED_LIMIT]
+    }
 
 
 # ==========================================
@@ -514,7 +1224,7 @@ if __name__ == "__main__":
     )
 
     print(
-        "AURA · PIPED SERVICE"
+        "AURA · MÚSICA ONLINE"
     )
 
     print(
@@ -535,10 +1245,95 @@ if __name__ == "__main__":
     print()
 
 
-    print(
-        json.dumps(
-            result,
-            indent=4,
-            ensure_ascii=False
+    if not result.get(
+        "success"
+    ):
+
+        print(
+            "ERROR:",
+            result.get(
+                "error"
+            )
         )
-    )
+
+    else:
+
+        items = result.get(
+            "items",
+            []
+        )
+
+        print(
+            f"{len(items)} resultados "
+            f"vía {result.get('instance')}"
+        )
+
+        print()
+
+
+        for position, item in enumerate(
+            items[:5],
+            start=1
+        ):
+
+            print(
+                f"{position}. "
+                f"{item['title']}"
+            )
+
+            print(
+                "   ",
+                item["artist"]
+            )
+
+
+        print()
+
+
+        first = items[0]
+
+
+        print(
+            "Obteniendo audio de:"
+        )
+
+        print(
+            first["title"]
+        )
+
+        print()
+
+
+        stream = get_audio_stream(
+            first["videoId"]
+        )
+
+
+        if stream.get(
+            "success"
+        ):
+
+            print(
+                "OK",
+                stream.get(
+                    "format"
+                ),
+                stream.get(
+                    "quality"
+                )
+            )
+
+            print(
+                stream.get(
+                    "url"
+                )[:120]
+            )
+
+        else:
+
+            print(
+                "ERROR:",
+                stream.get(
+                    "error"
+                )
+            )

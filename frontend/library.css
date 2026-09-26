@@ -83,11 +83,13 @@ button {
 
     margin-bottom: 38px;
 
-    font-size: 27px;
+    font-family: "Alien Block", sans-serif;
 
-    font-weight: 700;
+    font-size: 24px;
 
-    letter-spacing: 5px;
+    font-weight: 400;
+
+    letter-spacing: 3px;
 }
 
 
@@ -715,7 +717,7 @@ nav {
 
 
 /* ==========================================
-   BIBLIOTECA VACÍA
+   BIBLIOTECA VACÃA
 ========================================== */
 
 .empty-library {
@@ -994,7 +996,7 @@ nav {
 
 
 /* ==========================================
-   MENÚ DE PLAYLIST
+   MENÃš DE PLAYLIST
 ========================================== */
 
 .playlist-menu-overlay {
@@ -1231,7 +1233,7 @@ nav {
 
 
 /* ==========================================
-   MODAL EDICIÓN
+   MODAL EDICIÃ“N
 ========================================== */
 
 .modal-overlay {
@@ -1507,5 +1509,56 @@ nav {
         display: none;
 
     }
+
+}
+
+
+/* ==========================================
+   BOTÃ“N DE RADIO
+========================================== */
+
+.radio-button {
+
+    width: 30px;
+
+    height: 30px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(255, 255, 255, 0.14);
+
+    background: transparent;
+
+    color: rgba(255, 255, 255, 0.32);
+
+    font-size: 15px;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+
+}
+
+
+.radio-button:hover {
+
+    color: #ffffff;
+
+    border-color: rgba(255, 255, 255, 0.4);
+
+}
+
+
+.radio-button.active {
+
+    color: #ffffff;
+
+    background: rgba(155, 89, 255, 0.85);
+
+    border-color: transparent;
 
 }

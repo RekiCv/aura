@@ -160,7 +160,7 @@ const editComment =
 // AUDIO
 
 const audio =
-    new Audio();
+    window.AuraPlayer.audio;
 
 
 // ==========================================
@@ -975,6 +975,21 @@ function playSongFromLibrary(index) {
         "Artista desconocido";
 
 
+    window.AuraPlayer.setTrack({
+
+        title: song.title,
+
+        artist:
+            song.artist ||
+            "",
+
+        videoId: "",
+
+        source: "local"
+
+    });
+
+
     playButton.textContent =
         "Ⅱ";
 
@@ -1462,6 +1477,8 @@ audio.addEventListener(
 window.addEventListener(
     "pywebviewready",
     async () => {
+
+        window.AuraPlayer.restore();
 
         await loadLibrary();
 

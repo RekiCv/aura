@@ -73,19 +73,26 @@ button {
     z-index: 20;
 }
 
-
 .logo {
 
     padding: 0 12px;
 
     margin-bottom: 38px;
 
-    font-size: 27px;
-    font-weight: 700;
+    font-family: "Alien Block", sans-serif;
 
-    letter-spacing: 5px;
+    font-size: 24px;
+
+    font-weight: 400;
+
+    letter-spacing: 3px;
 
     color: #ffffff;
+
+    text-shadow:
+        0 0 12px rgba(168, 85, 247, 0.45),
+
+        0 0 34px rgba(168, 85, 247, 0.2);
 }
 
 
@@ -390,6 +397,119 @@ nav {
 
 
 /* ==========================================
+   BUSCADOR ONLINE
+   ========================================== */
+
+.online-search {
+
+    align-self: center;
+
+    width: 420px;
+    max-width: 100%;
+
+    height: 44px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    padding: 0 6px 0 15px;
+
+    border-radius: 22px;
+
+    background: rgba(255, 255, 255, 0.04);
+
+    border: 1px solid rgba(255, 255, 255, 0.07);
+
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease;
+}
+
+
+.online-search:focus-within {
+
+    background: rgba(155, 89, 255, 0.07);
+
+    border-color: rgba(155, 89, 255, 0.55);
+
+}
+
+
+.online-search .search-icon {
+
+    color: #65616c;
+
+    font-size: 19px;
+}
+
+
+.online-search input {
+
+    flex: 1;
+
+    min-width: 0;
+
+    height: 100%;
+
+    border: none;
+
+    outline: none;
+
+    background: transparent;
+
+    color: white;
+
+    font-size: 12px;
+}
+
+
+.online-search input::placeholder {
+
+    color: #5c5863;
+}
+
+
+.search-button {
+
+    height: 32px;
+
+    padding: 0 17px;
+
+    border-radius: 16px;
+
+    background: #9b59ff;
+
+    color: white;
+
+    font-size: 11px;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease;
+}
+
+
+.search-button:hover {
+
+    background: #a96dff;
+}
+
+
+.search-button:disabled {
+
+    background: rgba(255, 255, 255, 0.08);
+
+    color: #5c5863;
+
+    cursor: default;
+}
+
+
+/* ==========================================
    HERO
 ========================================== */
 
@@ -522,8 +642,179 @@ nav {
 
 
 /* ==========================================
+   RESULTADOS ONLINE
+   ========================================== */
+
+.online-section {
+
+    margin-top: 42px;
+}
+
+
+.online-section[hidden] {
+
+    display: none;
+}
+
+
+.online-section .section-header span {
+
+    color: #56525d;
+
+    font-size: 11px;
+}
+
+
+.online-list {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 2px;
+}
+
+
+.online-item {
+
+    min-height: 56px;
+
+    padding: 8px 12px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 14px;
+
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease;
+}
+
+
+.online-item:hover {
+
+    background: rgba(255, 255, 255, 0.035);
+}
+
+
+.online-item.playing {
+
+    background: rgba(155, 89, 255, 0.12);
+}
+
+
+.online-play {
+
+    width: 34px;
+    height: 34px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.05);
+
+    color: #a49eab;
+
+    font-size: 12px;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+
+.online-play:hover {
+
+    background: #9b59ff;
+
+    color: white;
+}
+
+
+.online-item.playing .online-play {
+
+    background: #9b59ff;
+
+    color: white;
+}
+
+
+.online-main {
+
+    min-width: 0;
+}
+
+
+.online-main strong {
+
+    display: block;
+
+    overflow: hidden;
+
+    white-space: nowrap;
+
+    text-overflow: ellipsis;
+
+    font-size: 12px;
+
+    font-weight: 500;
+}
+
+
+.online-main span {
+
+    display: block;
+
+    margin-top: 4px;
+
+    overflow: hidden;
+
+    white-space: nowrap;
+
+    text-overflow: ellipsis;
+
+    color: #68646e;
+
+    font-size: 10px;
+}
+
+
+.online-message {
+
+    padding: 26px;
+
+    border-radius: 14px;
+
+    background: rgba(255, 255, 255, 0.02);
+
+    border: 1px dashed rgba(255, 255, 255, 0.06);
+
+    color: #56525d;
+
+    font-size: 12px;
+
+    text-align: center;
+}
+
+
+/* ==========================================
    RECIENTE
-========================================== */
+   ========================================== */
+
 
 .recent-section {
 
@@ -636,6 +927,14 @@ nav {
     align-items: center;
 
     gap: 12px;
+
+    min-width: 0;
+}
+
+
+.now-playing-info {
+
+    min-width: 0;
 }
 
 
@@ -643,6 +942,12 @@ nav {
 
     width: 48px;
     height: 48px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
 
     border-radius: 8px;
 
@@ -654,6 +959,8 @@ nav {
         );
 
     border: 1px solid rgba(255, 255, 255, 0.05);
+
+    color: #77528e;
 }
 
 
@@ -717,6 +1024,60 @@ nav {
 }
 
 
+.player-center {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    gap: 7px;
+}
+
+
+.time-info {
+
+    width: 310px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    color: #5e5964;
+
+    font-size: 9px;
+}
+
+
+.progress-bar {
+
+    flex: 1;
+
+    height: 3px;
+
+    overflow: hidden;
+
+    border-radius: 10px;
+
+    background: rgba(255, 255, 255, 0.1);
+
+    cursor: pointer;
+}
+
+
+.progress-fill {
+
+    width: 0%;
+
+    height: 100%;
+
+    background: #9b59ff;
+}
+
+
 .volume {
 
     display: flex;
@@ -747,6 +1108,8 @@ nav {
     border-radius: 10px;
 
     background: rgba(255, 255, 255, 0.1);
+
+    cursor: pointer;
 }
 
 
@@ -952,4 +1315,374 @@ nav {
 .save-button:hover {
 
     background: #a96dff;
+}
+
+
+/* ==========================================
+   TOAST
+   ========================================== */
+
+.aura-toast {
+
+    position: fixed;
+
+    left: 50%;
+
+    bottom: 115px;
+
+    transform:
+        translate(-50%, 15px);
+
+    padding: 11px 17px;
+
+    border-radius: 9px;
+
+    background: rgba(25, 21, 32, 0.97);
+
+    border: 1px solid rgba(155, 89, 255, 0.2);
+
+    color: #d2cbd9;
+
+    font-size: 10px;
+
+    opacity: 0;
+
+    transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+
+    pointer-events: none;
+
+    z-index: 200;
+}
+
+
+.aura-toast.show {
+
+    opacity: 1;
+
+    transform: translate(-50%, 0);
+}
+
+
+/* ==========================================
+   AÑADIR RESULTADO ONLINE A PLAYLIST
+========================================== */
+
+.online-main {
+
+    flex: 1;
+}
+
+
+.online-add {
+
+    width: 30px;
+
+    height: 30px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.05);
+
+    color: #a49eab;
+
+    font-size: 15px;
+
+    cursor: pointer;
+
+    opacity: 0;
+
+    transition:
+        opacity 0.2s ease,
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+
+.online-item:hover .online-add,
+.online-add:focus-visible {
+
+    opacity: 1;
+}
+
+
+.online-add:hover {
+
+    background: #9b59ff;
+
+    color: white;
+}
+
+
+/* ==========================================
+   MENÚ AÑADIR A PLAYLIST
+========================================== */
+
+.playlist-menu-overlay {
+
+    position: fixed;
+
+    inset: 0;
+
+    display: none;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: rgba(0, 0, 0, 0.62);
+
+    backdrop-filter: blur(7px);
+
+    z-index: 100;
+}
+
+
+.playlist-menu-overlay.open {
+
+    display: flex;
+}
+
+
+.playlist-menu {
+
+    width: min(420px, calc(100% - 40px));
+
+    max-height: 70vh;
+
+    overflow-y: auto;
+
+    padding: 24px;
+
+    border-radius: 18px;
+
+    background: #121019;
+
+    border: 1px solid rgba(255, 255, 255, 0.08);
+
+    box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.5);
+}
+
+
+.playlist-menu-header {
+
+    display: flex;
+
+    align-items: flex-start;
+
+    justify-content: space-between;
+
+    margin-bottom: 18px;
+}
+
+
+.playlist-menu-header p {
+
+    margin: 0 0 6px;
+
+    color: #9569bd;
+
+    font-size: 9px;
+
+    font-weight: 600;
+
+    letter-spacing: 1.8px;
+}
+
+
+.playlist-menu-header h3 {
+
+    margin: 0;
+
+    font-size: 18px;
+
+    font-weight: 500;
+}
+
+
+.playlist-menu-list {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 5px;
+}
+
+
+.playlist-choice {
+
+    width: 100%;
+
+    min-height: 52px;
+
+    padding: 8px 10px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    border-radius: 9px;
+
+    background: rgba(255, 255, 255, 0.025);
+
+    color: #aaa5b0;
+
+    text-align: left;
+
+    cursor: pointer;
+}
+
+
+.playlist-choice:hover {
+
+    background: rgba(155, 89, 255, 0.09);
+
+    color: white;
+}
+
+
+.playlist-choice-icon {
+
+    width: 34px;
+
+    height: 34px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 8px;
+
+    background: rgba(155, 89, 255, 0.1);
+
+    color: #a873d0;
+}
+
+
+.playlist-choice-name {
+
+    flex: 1;
+
+    font-size: 11px;
+}
+
+
+.playlist-choice-arrow {
+
+    color: #796486;
+
+    font-size: 18px;
+}
+
+
+.playlist-loading,
+.playlist-empty-message {
+
+    padding: 20px;
+
+    color: #65606b;
+
+    text-align: center;
+
+    font-size: 11px;
+}
+
+
+.create-playlist-option {
+
+    width: 100%;
+
+    margin-top: 10px;
+
+    padding: 11px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    border-radius: 9px;
+
+    background: rgba(155, 89, 255, 0.08);
+
+    color: #ae7bdd;
+
+    font-size: 11px;
+
+    cursor: pointer;
+}
+
+
+.create-playlist-option:hover {
+
+    background: rgba(155, 89, 255, 0.14);
+}
+
+
+/* ==========================================
+   BOTÓN DE RADIO
+========================================== */
+
+.radio-button {
+
+    width: 30px;
+
+    height: 30px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(255, 255, 255, 0.14);
+
+    background: transparent;
+
+    color: rgba(255, 255, 255, 0.32);
+
+    font-size: 15px;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease;
+
+}
+
+
+.radio-button:hover {
+
+    color: #ffffff;
+
+    border-color: rgba(255, 255, 255, 0.4);
+
+}
+
+
+.radio-button.active {
+
+    color: #ffffff;
+
+    background: rgba(155, 89, 255, 0.85);
+
+    border-color: transparent;
+
 }

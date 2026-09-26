@@ -5,7 +5,7 @@ a = Analysis(
     ['backend/main.py'],
     pathex=[],
     binaries=[],
-    datas=[('frontend', 'frontend'), ('library', 'library')],
+    datas=[('frontend', 'frontend'), ('library', 'library'), ('assets', 'assets')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
@@ -35,4 +35,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+    icon=['assets/aura.ico'],
 )
