@@ -1,0 +1,31 @@
+# Dependencias de AURA
+#
+# Solo tres paquetes. El resto (bottle,
+# websockets, certifi, etc.) arrives
+# arrastrado por pywebview y yt-dlp.
+
+# Ventana nativa con HTML/JS embebido.
+# Necesita WebView2 en Windows.
+pywebview>=4.4
+
+# Extracción de audio de YouTube.
+# yt-dlp se actualiza muy a menudo: es
+# normal tener que subir la versión para
+# que una búsqueda vuelva a funcionar.
+yt-dlp>=2024.1.1
+
+# Lectura y escritura de etiquetas
+# (artista, álbum, género...).
+mutagen>=1.47
+
+
+# ==========================================
+# SOLO PARA COMPILAR
+# ==========================================
+# No hace falta para usar AURA, pero sí
+# para generar el ejecutable con
+# compilar.bat.
+#
+#   pip install pyinstaller
+#
+pyinstaller>=6.3

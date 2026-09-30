@@ -70,6 +70,12 @@ const onlineSection =
 const onlineList =
     document.getElementById("onlineList");
 
+const artistBlock =
+    document.getElementById("artistBlock");
+
+const artistList =
+    document.getElementById("artistList");
+
 const onlineStatus =
     document.getElementById("onlineStatus");
 
@@ -556,6 +562,8 @@ async function searchOnline() {
         </div>
     `;
 
+    artistBlock.hidden = true;
+
 
     try {
 
@@ -587,6 +595,8 @@ async function searchOnline() {
             `${onlineResults.length} resultados`;
 
 
+        renderArtists(onlineResults);
+
         renderOnlineResults();
 
 
@@ -613,6 +623,179 @@ async function searchOnline() {
             "Buscar";
 
     }
+
+}
+
+
+// ==========================================
+// ARTISTAS
+// ==========================================
+//
+// Los resultados de busquenda ya traen el
+// canal de cada cancion (channelId,
+// channelVerified...). Asi que los
+// artistas se sacan agrupando: no hace
+// falta ninguna llamada extra a YouTube.
+
+const MAX_ARTISTS = 4;
+
+
+function collectArtists(items) {
+
+    const porCanal = new Map();
+
+    for (const item of items) {
+
+        const id = item.channelId;
+
+        if (!id) {
+            continue;
+        }
+
+        if (!porCanal.has(id)) {
+
+            porCanal.set(id, {
+                channelId: id,
+                name:
+                    item.channelName
+                    || item.artist
+                    || "Desconocido",
+                verified:
+                    !!item.channelVerified,
+                followers:
+                    item.channelFollowers
+                    || 0,
+                // La foto real del canal solo se
+                // consigue al abrir el artista
+                // (es otra peticion). Aqui se usa
+                // la portada de su primera cancion.
+                thumbnail:
+                    item.thumbnail || "",
+                songs: 0
+            });
+
+        }
+
+        porCanal.get(id).songs += 1;
+
+    }
+
+
+    const artistas =
+        [...porCanal.values()];
+
+    // Verificado primero, despues el que
+    // mas canciones aporta, y por ultimo
+    // alfabeticamente para que sea estable.
+    artistas.sort((a, b) => {
+
+        if (a.verified !== b.verified) {
+            return a.verified ? -1 : 1;
+        }
+
+        if (a.songs !== b.songs) {
+            return b.songs - a.songs;
+        }
+
+        return a.name.localeCompare(b.name);
+
+    });
+
+    return artistas.slice(
+        0, MAX_ARTISTS
+    );
+
+}
+
+
+function formatFollowers(count) {
+
+    const numero = Number(count) || 0;
+
+    if (numero >= 1000000) {
+        return `${(numero / 1000000).toFixed(1).replace(".0", "")} M`;
+    }
+
+    if (numero >= 1000) {
+        return `${(numero / 1000).toFixed(0)} mil`;
+    }
+
+    return `${numero}`;
+
+}
+
+
+function renderArtists(items) {
+
+    const artistas =
+        collectArtists(items);
+
+    artistList.innerHTML = "";
+
+    // Sin artistas no se ensena nada: la
+    // seccion solo aparece cuando aporta.
+    if (artistas.length === 0) {
+        artistBlock.hidden = true;
+        return;
+    }
+
+    for (const artista of artistas) {
+
+        const card =
+            document.createElement("button");
+
+        card.className =
+            "artist-card";
+
+        card.title =
+            artista.verified
+            ? `${artista.name} · verificado`
+            : artista.name;
+
+        const verified = artista.verified
+            ? `<span class="artist-verified" title="Verificado">✓</span>`
+            : "";
+
+        card.innerHTML = `
+            <span class="artist-avatar">
+                ${
+                    artista.thumbnail
+                        ? `<img src="${escapeHtml(artista.thumbnail)}" alt="" loading="lazy">`
+                        : `<span class="artist-initial">${escapeHtml(artista.name.charAt(0).toUpperCase())}</span>`
+                }
+            </span>
+
+            <span class="artist-name">
+                ${escapeHtml(artista.name)}
+            </span>
+
+            <span class="artist-meta">
+                ${verified}
+                ${artista.followers ? `${formatFollowers(artista.followers)} seguidores` : `${artista.songs} ${artista.songs === 1 ? "canción" : "canciones"}`}
+            </span>
+        `;
+
+        card.addEventListener(
+            "click",
+            () => openArtist(artista)
+        );
+
+        artistList.appendChild(card);
+
+    }
+
+    artistBlock.hidden = false;
+
+}
+
+
+function openArtist(artista) {
+
+    window.location.href =
+        "artist.html?c="
+        + encodeURIComponent(artista.channelId)
+        + "&n="
+        + encodeURIComponent(artista.name);
 
 }
 

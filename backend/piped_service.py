@@ -323,6 +323,28 @@ def get_artist(
 # CONVERTIR RESULTADO
 # ==========================================
 
+def get_channel_id(
+    entry
+):
+    # channel_id es el "UC..." estable. uploader_id puede
+    # ser el "@nombre" y cambiar en cualquier momento.
+    for key in (
+        "channel_id",
+        "uploader_id"
+    ):
+
+        value = entry.get(
+            key
+        )
+
+        if value:
+            return str(
+                value
+            )
+
+    return ""
+
+
 def to_item(
     entry
 ):
@@ -333,6 +355,9 @@ def to_item(
         )
     )
 
+    channel_id = get_channel_id(
+        entry
+    )
 
     return {
 
@@ -367,11 +392,247 @@ def to_item(
             f"/watch?v={video_id}"
         ),
 
+        # ==================================
+        # ARTISTA
+        # ==================================
+        # yt-dlp ya devuelve esto en la
+        # busqueda, asi que no cuesta
+        # ninguna llamada extra.
+
+        "channelId": channel_id,
+
+        "channelName": str(
+            entry.get(
+                "channel"
+            )
+            or entry.get(
+                "uploader"
+            )
+            or ""
+        ),
+
+        "channelVerified": bool(
+            entry.get(
+                "channel_is_verified"
+            )
+        ),
+
+        "channelFollowers": int(
+            entry.get(
+                "channel_follower_count"
+            )
+            or 0
+        ),
+
+        "channelUrl": str(
+            entry.get(
+                "channel_url"
+            )
+            or entry.get(
+                "uploader_url"
+            )
+            or ""
+        ),
+
         "source": ENGINE_NAME,
 
         "pipedInstance": ENGINE_NAME
 
     }
+
+
+# ==========================================
+# CANCIONES DE UN ARTISTA
+# ==========================================
+#
+# Se leen de la pestana "/videos" del
+# canal. No hace falta el filtro de
+# busqueda: con la URL del canal
+# yt-dlp devuelve los ultimos(~0,8s).
+# ==========================================
+
+# Los canales de YouTube empiezan por "UC"
+# y siguen con 22 caracteres.
+CHANNEL_ID_PATTERN = re.compile(
+    r"^UC[A-Za-z0-9_-]{22}$"
+)
+
+
+CHANNEL_LIMIT = 50
+
+
+CHANNEL_FETCH = 60
+
+
+# Directos y videos de mas de 15 minutos
+# no son canciones: se descartan.
+MAX_CHANNEL_SECONDS = 900
+
+
+def get_avatar(
+    data
+):
+    thumbnails = (
+        data.get(
+            "thumbnails"
+        )
+        or []
+    )
+
+    if not thumbnails:
+        return ""
+
+    # La ultima suele ser la de mayor
+    # resolucion.
+    return str(
+        thumbnails[-1].get(
+            "url",
+            ""
+        )
+    )
+
+
+def get_channel_options():
+
+    options = get_options(
+        extract_flat="in_playlist"
+    )
+
+    options["noplaylist"] = False
+
+    options["playlistend"] = CHANNEL_FETCH
+
+    return options
+
+
+def is_usable_song(
+    entry
+):
+    if not entry:
+        return False
+
+    if not entry.get("id"):
+        return False
+
+    duration = int(
+        entry.get("duration")
+        or 0
+    )
+
+    if (
+        duration
+        and duration > MAX_CHANNEL_SECONDS
+    ):
+        return False
+
+    return True
+
+
+def get_channel_videos(
+    channel_id,
+    limit=CHANNEL_LIMIT
+):
+    channel_id = str(
+        channel_id or ""
+    ).strip()
+
+    if not CHANNEL_ID_PATTERN.match(
+        channel_id
+    ):
+        return {
+            "success": False,
+            "error":
+                "El identificador del "
+                "artista no es valido.",
+            "items": []
+        }
+
+    try:
+
+        limit = int(limit)
+
+    except (TypeError, ValueError):
+
+        limit = CHANNEL_LIMIT
+
+    limit = max(
+        1,
+        min(limit, CHANNEL_LIMIT)
+    )
+
+    url = (
+        "https://www.youtube.com"
+        f"/channel/{channel_id}/videos"
+    )
+
+    try:
+
+        with yt_dlp.YoutubeDL(
+            get_channel_options()
+        ) as youtube_dl:
+
+            data = youtube_dl.extract_info(
+                url,
+                download=False
+            )
+
+        if not data:
+            return {
+                "success": False,
+                "error":
+                    "No se pudo leer el "
+                    "artista.",
+                "items": []
+            }
+
+        items = [
+            to_item(entry)
+
+            for entry in (
+                data.get("entries") or []
+            )
+
+            if is_usable_song(entry)
+        ]
+
+        return {
+
+            "success": True,
+
+            "artist": {
+                "channelId": channel_id,
+                "name": str(
+                    data.get("channel")
+                    or data.get("uploader")
+                    or ""
+                ),
+                "avatar": get_avatar(data),
+                "verified": bool(
+                    data.get(
+                        "channel_is_verified"
+                    )
+                ),
+                "followers": int(
+                    data.get(
+                        "channel_follower_count"
+                    )
+                    or 0
+                )
+            },
+
+            "instance": ENGINE_NAME,
+
+            "items": items[:limit]
+
+        }
+
+    except Exception as error:
+
+        return {
+            "success": False,
+            "error": friendly_error(error),
+            "items": []
+        }
 
 
 # ==========================================

@@ -874,12 +874,35 @@ class AuraAPI:
                 "success": False,
       
                 "error":
-                    "AURA no puede buscar m�sica "
+                    "AURA no puede buscar música "
                     f"online. {PIPED_SERVICE_ERROR}"
-      
+
             }
-      
+
         return piped_service.get_audio_stream(video_id)
+
+
+    def get_artist(
+        self,
+        channel_id,
+        limit=50
+    ):
+        """Canciones de un artista de YouTube."""
+
+        if piped_service is None:
+
+            return {
+                "success": False,
+                "error":
+                    "AURA no puede buscar música "
+                    f"online. {PIPED_SERVICE_ERROR}",
+                "items": []
+            }
+
+        return piped_service.get_channel_videos(
+            channel_id,
+            limit
+        )
       
       
     def get_related(self, video_id, title, artist):
@@ -891,7 +914,7 @@ class AuraAPI:
                 "success": False,
       
                 "error":
-                    "AURA no puede buscar m�sica "
+                    "AURA no puede buscar música "
                     f"online. {PIPED_SERVICE_ERROR}",
       
                 "items": []

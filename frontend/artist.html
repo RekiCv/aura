@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>AURA — Artista</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <link rel="icon" href="../assets/aura.png">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Alien+Block&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- Reutiliza la hoja de la playlist: sidebar,
+         cabecera y reproductor son identicos. -->
+    <link rel="stylesheet" href="playlist.css">
+
+    <link rel="stylesheet" href="artist.css">
+
+</head>
+
+
+<body>
+
+    <div class="playlist-page">
+
+
+        <!-- ==========================================
+             SIDEBAR
+        =========================================== -->
+
+        <aside class="sidebar">
+
+            <div class="logo">
+                AURA
+            </div>
+
+
+            <nav>
+
+                <button
+                    class="nav-item"
+                    onclick="window.location.href='menu.html'"
+                >
+                    <span>⌂</span>
+                    Inicio
+                </button>
+
+
+                <button
+                    class="nav-item"
+                    onclick="window.location.href='library.html'"
+                >
+                    <span>♫</span>
+                    Biblioteca
+                </button>
+
+
+                <div class="sidebar-section">
+
+                    <div class="sidebar-section-header">
+
+                        <span>
+                            LISTAS
+                        </span>
+
+                    </div>
+
+
+                    <div
+                        id="playlistList"
+                        class="playlist-list"
+                    ></div>
+
+                </div>
+
+            </nav>
+
+
+            <div class="sidebar-bottom">
+
+                <button
+                    class="nav-item"
+                    onclick="window.location.href='settings.html'"
+                >
+                    <span>⚙</span>
+                    Ajustes
+                </button>
+
+            </div>
+
+        </aside>
+
+
+
+        <!-- ==========================================
+             CONTENIDO
+        =========================================== -->
+
+        <main class="content">
+
+            <header class="playlist-header">
+
+                <button
+                    class="back-button"
+                    id="backButton"
+                    title="Volver"
+                >
+                    ←
+                </button>
+
+
+                <div
+                    class="playlist-art artist-art"
+                    id="artistAvatar"
+                >
+                    ♫
+                </div>
+
+
+                <div class="playlist-info">
+
+                    <p>
+                        ARTISTA
+                    </p>
+
+                    <h1 id="artistName">
+                        Cargando...
+                    </h1>
+
+                    <span id="artistMeta">
+                        Buscando canciones
+                    </span>
+
+                </div>
+
+            </header>
+
+
+
+            <section class="playlist-actions">
+
+                <button
+                    id="playAllButton"
+                    class="play-all-button"
+                >
+                    ▶ Reproducir todo
+                </button>
+
+
+                <button
+                    id="addAllToPlaylistButton"
+                    class="delete-playlist-button"
+                    hidden
+                >
+                    + Añadir a una lista
+                </button>
+
+            </section>
+
+
+
+            <section class="songs-section">
+
+                <div
+                    id="artistSongs"
+                    class="playlist-songs"
+                >
+
+                    <div class="empty-playlist">
+
+                        <div class="empty-icon">
+                            ♫
+                        </div>
+
+                        <h2>
+                            Cargando canciones
+                        </h2>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </main>
+
+
+
+        <!-- ==========================================
+             REPRODUCTOR
+        =========================================== -->
+
+        <footer class="player">
+
+            <div class="now-playing">
+
+                <div class="mini-art">
+                    ♫
+                </div>
+
+                <div>
+
+                    <strong id="currentTitle">
+                        Nada reproduciéndose
+                    </strong>
+
+                    <span id="currentArtist">
+                        Selecciona una canción
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="player-center">
+
+                <div class="player-controls">
+
+                    <button
+                        id="rewindButton"
+                        title="Retroceder 10 segundos"
+                    >
+                        ↶
+                    </button>
+
+                    <button
+                        id="playButton"
+                        class="main-play"
+                        title="Reproducir"
+                    >
+                        ▶
+                    </button>
+
+
+                    <button
+                        id="forwardButton"
+                        title="Avanzar 10 segundos"
+                    >
+                        ↷
+                    </button>
+
+                </div>
+
+
+                <div class="time-info">
+
+                    <span id="currentTime">
+                        0:00
+                    </span>
+
+
+                    <div
+                        class="progress-bar"
+                        id="progressBar"
+                        title="Buscar en la canción"
+                    >
+
+                        <div
+                            class="progress-fill"
+                            id="progressFill"
+                        ></div>
+
+                    </div>
+
+
+                    <span id="duration">
+                        0:00
+                    </span>
+
+                </div>
+
+            </div>
+
+<div class="volume">
+   
+   <button
+    class="radio-button active"
+    id="autoRecommendButton"
+    type="button"
+    title="Recomendaciones automáticas"
+   >
+    ∞
+   </button>
+   
+   <span>
+    
+                    ♪
+                </span>
+
+                <div
+                    class="volume-line"
+                    id="volumeLine"
+                    title="Volumen"
+                >
+
+                    <div id="volumeFill"></div>
+
+                </div>
+
+            </div>
+
+        </footer>
+
+    </div>
+
+
+    <script src="player-state.js"></script>
+
+
+    <script src="artist.js"></script>
+
+</body>
+
+</html>

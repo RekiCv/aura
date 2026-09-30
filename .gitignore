@@ -1,0 +1,75 @@
+# ==========================================
+# COMPILACIÓN (PyInstaller)
+# ==========================================
+# Todo esto se regenera con compilar.bat.
+build/
+dist/
+
+# El .spec lo genera PyInstaller en cada
+# compilación (ver compilar.bat), así que
+# tampoco se versiona.
+*.spec
+
+
+# ==========================================
+# PYTHON
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+
+.venv/
+venv/
+env/
+ENV/
+
+# Instalaciones de paquetes
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+
+# Estadísticas de pytest / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Tipos
+.mypy_cache/
+.dmypy.json
+
+
+# ==========================================
+# ENTORNO
+# ==========================================
+.env
+.env.local
+
+
+# ==========================================
+# SISTEMA OPERATIVO
+# ==========================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+
+desktop.ini
+$RECYCLE.BIN/
+
+*.lnk
+
+
+# ==========================================
+# EDITORES
+# ==========================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~

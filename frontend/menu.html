@@ -51,7 +51,7 @@
                     class="nav-item active"
                     onclick="window.location.href='menu.html'"
                 >
-                    <span>âŒ‚</span>
+                    <span>⌂</span>
                     Inicio
                 </button>
 
@@ -60,7 +60,7 @@
                     class="nav-item"
                     onclick="window.location.href='library.html'"
                 >
-                    <span>â™«</span>
+                    <span>♫</span>
                     Biblioteca
                 </button>
 
@@ -102,7 +102,7 @@
                     class="nav-item"
                     onclick="window.location.href='settings.html'"
                 >
-                    <span>âš™</span>
+                    <span>⚙</span>
                     Ajustes
                 </button>
 
@@ -127,7 +127,7 @@
                     </p>
 
                     <h1>
-                        Tu mÃºsica.
+                        Tu música.
                     </h1>
 
                 </div>
@@ -136,14 +136,14 @@
                 <div class="online-search">
 
                     <span class="search-icon">
-                        âŒ•
+                        ⌕
                     </span>
 
 
                     <input
                         type="text"
                         id="onlineSearchInput"
-                        placeholder="Buscar mÃºsica en YouTube..."
+                        placeholder="Buscar música en YouTube..."
                         autocomplete="off"
                     >
 
@@ -160,7 +160,7 @@
 
 
                 <button class="profile-button">
-                    â—‰
+                    ◉
                 </button>
 
             </header>
@@ -172,7 +172,7 @@
                 <div class="hero-content">
 
                     <p class="eyebrow">
-                        TU COLECCIÃ“N
+                        TU COLECCIÓN
                     </p>
 
                     <h2>
@@ -181,14 +181,14 @@
                     </h2>
 
                     <p class="hero-description">
-                        Toda tu mÃºsica, en un solo lugar.
+                        Toda tu música, en un solo lugar.
                     </p>
 
                     <button
                         class="primary-button"
                         onclick="window.location.href='library.html'"
                     >
-                        Explorar mÃºsica
+                        Explorar música
                     </button>
 
                 </div>
@@ -201,7 +201,7 @@
 
 
             <!-- ==========================================
-                 MÃšSICA ONLINE
+                 MÚSICA ONLINE
             =========================================== -->
 
             <section
@@ -217,6 +217,31 @@
                     </h2>
 
                     <span id="onlineStatus"></span>
+
+                </div>
+
+
+                <!-- ==========================================
+                     ARTISTAS
+                     Se agrupan los resultados por canal. No
+                     hace llamadas extra: los datos vienen en
+                     la propia busqueda.
+                =========================================== -->
+
+                <div
+                    class="artist-block"
+                    id="artistBlock"
+                    hidden
+                >
+
+                    <h3 class="artist-block-title">
+                        Artistas
+                    </h3>
+
+                    <div
+                        class="artist-list"
+                        id="artistList"
+                    ></div>
 
                 </div>
 
@@ -275,17 +300,17 @@
             <div class="now-playing">
 
                 <div class="mini-art">
-                    â™«
+                    ♫
                 </div>
 
                 <div class="now-playing-info">
 
                     <strong id="currentTitle">
-                        Nada reproduciÃ©ndose
+                        Nada reproduciéndose
                     </strong>
 
                     <span id="currentArtist">
-                        Selecciona una canciÃ³n
+                        Selecciona una canción
                     </span>
 
                 </div>
@@ -301,7 +326,7 @@
                         id="rewindButton"
                         title="Retroceder 10 segundos"
                     >
-                        â†¶
+                        ↶
                     </button>
 
 
@@ -310,7 +335,7 @@
                         class="main-play"
                         title="Reproducir"
                     >
-                        â–¶
+                        ▶
                     </button>
 
 
@@ -318,7 +343,7 @@
                         id="forwardButton"
                         title="Avanzar 10 segundos"
                     >
-                        â†·
+                        ↷
                     </button>
 
                 </div>
@@ -334,7 +359,7 @@
                     <div
                         class="progress-bar"
                         id="progressBar"
-                        title="Buscar en la canciÃ³n"
+                        title="Buscar en la canción"
                     >
 
                         <div
@@ -359,14 +384,14 @@
     class="radio-button active"
     id="autoRecommendButton"
     type="button"
-    title="Recomendaciones automÃ¡ticas"
+    title="Recomendaciones automáticas"
    >
-    âˆž
+    ∞
    </button>
    
    <span>
     
-                    â™ª
+                    ♪
                 </span>
 
                 <div
@@ -416,7 +441,7 @@
                         id="closePlaylistModal"
                         class="modal-close"
                     >
-                        Ã—
+                        ×
                     </button>
 
                 </div>
@@ -466,7 +491,7 @@
 
 
         <!-- ==========================================
-             MENÃš AÃ‘ADIR A PLAYLIST
+             MENÚ AÑADIR A PLAYLIST
         =========================================== -->
 
         <div
@@ -488,7 +513,7 @@
                         </p>
 
                         <h3>
-                            AÃ±adir a lista
+                            Añadir a lista
                         </h3>
 
                     </div>
@@ -498,7 +523,7 @@
                         id="closePlaylistMenu"
                         class="modal-close"
                     >
-                        Ã—
+                        ×
                     </button>
 
                 </div>
