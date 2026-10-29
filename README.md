@@ -4,7 +4,7 @@ AURA is a desktop music player built with an HTML, CSS, and JavaScript interface
 
 ## Features
 
-- **Local Library** — Import your music files into `library/`, with metadata read using Mutagen.
+- **Local Library** — Import your music files into `library/`, with metadata.
 - **Online Music** — Search for and play music online without downloading files to your computer.
 - **Artist Pages** — Explore artists and browse their available songs.
 - **Playlists** — Create and manage playlists containing local and online tracks.
